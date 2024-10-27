@@ -14,7 +14,7 @@ import java.util.*;
 public class ManualTest {
 
     static Car[] cars;
-    static ParsableSortedSet<Car> cSeries = new ParsableBstSet<>(Car::new, Car.byPrice);
+    static ParsableSortedSet<Car> cSeries = new ParsableBstSet<>(Car::new, Car.byMake);
 
     public static void main(String[] args) throws CloneNotSupportedException {
         Locale.setDefault(Locale.US); // Unify number formats
@@ -39,7 +39,6 @@ public class ManualTest {
         Car c9 = new Car("Honda   Civic  2017  36400 850.3");
 
         Car[] carsArray = {c9, c7, c8, c5, c1, c6};
-
         Ks.oun("Car set:");
         ParsableSortedSet<Car> carsSet = new ParsableBstSet<>(Car::new);
 
@@ -49,6 +48,9 @@ public class ManualTest {
         }
         Ks.oun("");
         Ks.oun(carsSet.toVisualizedString(""));
+        carsSet.remove(c9);
+        Ks.oun(carsSet.toVisualizedString(""));
+
 
         ParsableSortedSet<Car> carsSetCopy = (ParsableSortedSet<Car>) carsSet.clone();
 

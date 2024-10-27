@@ -139,9 +139,16 @@ public class BstSet<E extends Comparable<E>> implements SortedSet<E>, Cloneable 
      */
     @Override
     public void remove(E element) {
-        throw new UnsupportedOperationException("Students need to implement remove(E element)");
+        //if (get(element) == null) {
+        //    throw new UnsupportedOperationException("No element in binary search tree");
+        //}
+
+        root = removeRecursive(element, root);
+        size--;
+        //throw new UnsupportedOperationException("Students need to implement remove(E element)");
 
     }
+
 
     /**
      * Only elements within the input set remain in the set.
@@ -154,7 +161,32 @@ public class BstSet<E extends Comparable<E>> implements SortedSet<E>, Cloneable 
     }
 
     private BstNode<E> removeRecursive(E element, BstNode<E> node) {
-        throw new UnsupportedOperationException("Students need to implement removeRecursive(E element, BstNode<E>n)");
+        //BstNode<E> nodeCurr = root;
+        if (node == null) {
+            throw new IllegalArgumentException("No element in binary search tree");
+        }
+
+        int cmp = c.compare(element, node.element);
+        if (cmp < 0) {
+            node.left = removeRecursive(element, node.left);
+            return node;
+        } else if (cmp > 0) {
+            node.right = removeRecursive(element, node.right);
+            return node;
+        }
+        if (node.left == null ) {
+            return node.right;
+        }
+        else if (node.right == null) {
+            return node.left;
+        }
+        else if (node.right != null && node.left != null) {
+            BstNode<E> a = get(node.right, false);
+            a.left = node.left;
+            return node.right;
+        }
+
+        return null;
     }
 
     /**
