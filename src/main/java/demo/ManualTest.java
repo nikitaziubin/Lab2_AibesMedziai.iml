@@ -50,6 +50,15 @@ public class ManualTest {
         Ks.oun(carsSet.toVisualizedString(""));
         carsSet.remove(c9);
         Ks.oun(carsSet.toVisualizedString(""));
+        Ks.oun("Testing containsAll: ");
+        ParsableSortedSet<Car> carsSetToTest = new ParsableBstSet<>(Car::new);
+        carsSetToTest.add(c1);
+        carsSetToTest.add(c2);
+        carsSetToTest.add(c3);
+        boolean a = carsSet.containsAll(carsSetToTest);
+        System.out.println(a);
+
+
 
 
         ParsableSortedSet<Car> carsSetCopy = (ParsableSortedSet<Car>) carsSet.clone();

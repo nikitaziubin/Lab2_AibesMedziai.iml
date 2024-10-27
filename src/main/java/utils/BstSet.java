@@ -88,9 +88,16 @@ public class BstSet<E extends Comparable<E>> implements SortedSet<E>, Cloneable 
      */
     @Override
     public boolean containsAll(Set<E> set) {
-        throw new UnsupportedOperationException("Students need to implement containsAll(Set<E> set)");
-
-    }
+        if (set == null) {
+            throw new IllegalArgumentException("Element is null in add(E element)");
+        }
+        for (E e : set) {
+            if (!contains(e)) {
+                return false;
+            }
+        }
+        return true;
+       }
 
     /**
      Adds a new element to the set.
@@ -113,7 +120,12 @@ public class BstSet<E extends Comparable<E>> implements SortedSet<E>, Cloneable 
      */
     @Override
     public void addAll(Set<E> set) {
-        throw new UnsupportedOperationException("Students need to implement addAll(Set<E> set)");
+        if (set == null) {
+            throw new IllegalArgumentException("Set is null in addAll(Set<E> set)");
+        }
+        for (E element : set) {
+            add(element);
+        }
     }
 
     private BstNode<E> addRecursive(E element, BstNode<E> node) {
