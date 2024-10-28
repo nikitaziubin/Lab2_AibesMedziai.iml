@@ -169,7 +169,21 @@ public class BstSet<E extends Comparable<E>> implements SortedSet<E>, Cloneable 
      */
     @Override
     public void retainAll(Set<E> set) {
-        throw new UnsupportedOperationException("Students need to implement retainAll(Set<E> set)");
+        Iterator<E> it = new IteratorBst(true) ;
+        if (set == null) {
+            throw new IllegalArgumentException("The set is empty");
+        }
+        int count = 0;
+        while (it.hasNext()){
+            E elementInBst = it.next();
+            if(set.contains(elementInBst)){
+                it.remove();
+                count++;
+                if (set.size() == count){
+                    return;
+                }
+            }
+        }
     }
 
     private BstNode<E> removeRecursive(E element, BstNode<E> node) {
@@ -415,7 +429,33 @@ public class BstSet<E extends Comparable<E>> implements SortedSet<E>, Cloneable 
      */
     @Override
     public Set<E> subSet(E element1, E element2) {
-        throw new UnsupportedOperationException("Students need to implement subSet()");
+        SortedSet<E> headSet = new BstSet<>();
+        Iterator<E> it = new IteratorBst(true) ;
+        boolean flag = false;
+        if (get(element1) == null ) {
+            throw new IllegalArgumentException("No element e1  in binary search tree");
+        }
+        if (get(element2) == null) {
+            throw new IllegalArgumentException("No element  e2 in binary search tree");
+        }
+        if ( element1.equals(element2)) {
+            headSet.add(element1);
+            return headSet;
+        }
+        while (it.hasNext()){
+            E elementInBst = it.next();
+            if(elementInBst.equals(element1)){
+                flag = true;
+            }
+            else if (elementInBst.equals(element2)){
+                flag = false;
+                headSet.add(elementInBst);
+            }
+            if (flag){
+                headSet.add(elementInBst);
+            }
+        }
+        return headSet;
     }
 
     /**
@@ -512,7 +552,11 @@ public class BstSet<E extends Comparable<E>> implements SortedSet<E>, Cloneable 
 
         @Override
         public void remove() {
-            throw new UnsupportedOperationException("Students need to implement remove()");
+            if (lastInStack == null) {
+                root = null;
+            }
+            removeRecursive(last.element, lastInStack);
+            size--;
         }
 
         private void toStack(BstNode<E> node) {

@@ -50,7 +50,7 @@ public class ManualTest {
         Ks.oun(carsSet.toVisualizedString(""));
         //carsSet.remove(c9);
         //Ks.oun(carsSet.toVisualizedString(""));
-        Ks.oun("Testing containsAll: ");
+        /*Ks.oun("Testing containsAll: ");
         ParsableSortedSet<Car> carsSetToTest = new ParsableBstSet<>(Car::new);
         carsSetToTest.add(c1);
         carsSetToTest.add(c6);
@@ -64,12 +64,33 @@ public class ManualTest {
         for (Object c : b) {
             System.out.println(c);
         }
+        Ks.oun("");
         Ks.oun("Testing tailSet: ");
         Ks.oun("");
         b = carsSet.tailSet(c6);
         for (Object c : b) {
             System.out.println(c);
         }
+
+        Ks.oun("");
+        Ks.oun("Testing subSet: ");
+        Ks.oun("");
+        b = carsSet.subSet(c6, c6);
+        for (Object c : b) {
+            System.out.println(c);
+        }*/
+
+
+        Ks.oun("");
+        Ks.oun("Testing retainAll: ");
+        Ks.oun("");
+        ParsableSortedSet<Car> carsToIterate = new ParsableBstSet<>(Car::new);
+        carsToIterate.add(c9);
+        carsToIterate.add(c5);
+        carsToIterate.add(c7);
+        carsToIterate.add(c8);
+        carsSet.retainAll(carsToIterate);
+        Ks.oun(carsSet.toVisualizedString(""));
 
 
         ParsableSortedSet<Car> carsSetCopy = (ParsableSortedSet<Car>) carsSet.clone();
