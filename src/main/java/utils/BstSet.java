@@ -426,8 +426,22 @@ public class BstSet<E extends Comparable<E>> implements SortedSet<E>, Cloneable 
      */
     @Override
     public Set<E> tailSet(E element) {
-
-        return null;
+        SortedSet<E> tailSet = new BstSet<>();
+        Iterator<E> it = new IteratorBst(true) ;
+        boolean flag = false;
+        if (get(element) == null) {
+            throw new IllegalArgumentException("No element in binary search tree");
+        }
+        while (it.hasNext()){
+            E elementInBst = it.next();
+            if(elementInBst.equals(element)){
+                flag = true;
+            }
+            if (flag){
+                tailSet.add(elementInBst);
+            }
+        }
+        return tailSet;
     }
 
     /**

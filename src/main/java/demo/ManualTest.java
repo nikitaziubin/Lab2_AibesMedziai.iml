@@ -58,13 +58,18 @@ public class ManualTest {
         boolean a = carsSet.containsAll(carsSetToTest);
         System.out.println(a);
         Ks.oun("");
-        Ks.oun("Testing tailSet: ");
+        Ks.oun("Testing headSet: ");
         Ks.oun("");
         Set b = carsSet.headSet(c7);
         for (Object c : b) {
             System.out.println(c);
         }
-        Ks.oun(carsSet.toVisualizedString(""));
+        Ks.oun("Testing tailSet: ");
+        Ks.oun("");
+        b = carsSet.tailSet(c6);
+        for (Object c : b) {
+            System.out.println(c);
+        }
 
 
         ParsableSortedSet<Car> carsSetCopy = (ParsableSortedSet<Car>) carsSet.clone();
