@@ -48,17 +48,23 @@ public class ManualTest {
         }
         Ks.oun("");
         Ks.oun(carsSet.toVisualizedString(""));
-        carsSet.remove(c9);
-        Ks.oun(carsSet.toVisualizedString(""));
+        //carsSet.remove(c9);
+        //Ks.oun(carsSet.toVisualizedString(""));
         Ks.oun("Testing containsAll: ");
         ParsableSortedSet<Car> carsSetToTest = new ParsableBstSet<>(Car::new);
         carsSetToTest.add(c1);
-        carsSetToTest.add(c2);
-        carsSetToTest.add(c3);
+        carsSetToTest.add(c6);
+        carsSetToTest.add(c9);
         boolean a = carsSet.containsAll(carsSetToTest);
         System.out.println(a);
-
-
+        Ks.oun("");
+        Ks.oun("Testing tailSet: ");
+        Ks.oun("");
+        Set b = carsSet.headSet(c7);
+        for (Object c : b) {
+            System.out.println(c);
+        }
+        Ks.oun(carsSet.toVisualizedString(""));
 
 
         ParsableSortedSet<Car> carsSetCopy = (ParsableSortedSet<Car>) carsSet.clone();

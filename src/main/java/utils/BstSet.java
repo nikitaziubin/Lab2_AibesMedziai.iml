@@ -390,7 +390,20 @@ public class BstSet<E extends Comparable<E>> implements SortedSet<E>, Cloneable 
      */
     @Override
     public Set<E> headSet(E element) {
-        throw new UnsupportedOperationException("Students need to implement headSet()");
+        SortedSet<E> headSet = new BstSet<>();
+        Iterator<E> it = new IteratorBst(true) ;
+        if (get(element) == null) {
+            throw new IllegalArgumentException("No element in binary search tree");
+        }
+        while (it.hasNext()){
+            E elementInBst = it.next();
+            if(elementInBst.equals(element)){
+                headSet.add(elementInBst);
+                break;
+            }
+            headSet.add(elementInBst);
+        }
+        return headSet;
     }
 
     /**
@@ -413,7 +426,8 @@ public class BstSet<E extends Comparable<E>> implements SortedSet<E>, Cloneable 
      */
     @Override
     public Set<E> tailSet(E element) {
-        throw new UnsupportedOperationException("Students need to implement tailSet()");
+
+        return null;
     }
 
     /**
