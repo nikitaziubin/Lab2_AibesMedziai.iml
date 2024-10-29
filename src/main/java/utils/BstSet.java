@@ -555,6 +555,11 @@ public class BstSet<E extends Comparable<E>> implements SortedSet<E>, Cloneable 
             if (lastInStack == null) {
                 root = null;
             }
+            if (last == root) {
+                root = removeRecursive(last.element, lastInStack);
+                size--;
+                return;
+            }
             removeRecursive(last.element, lastInStack);
             size--;
         }

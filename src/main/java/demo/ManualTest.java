@@ -92,7 +92,6 @@ public class ManualTest {
         carsSet.retainAll(carsToIterate);
         Ks.oun(carsSet.toVisualizedString(""));
 
-
         ParsableSortedSet<Car> carsSetCopy = (ParsableSortedSet<Car>) carsSet.clone();
 
         carsSetCopy.add(c2);
