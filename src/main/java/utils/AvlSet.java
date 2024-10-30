@@ -71,11 +71,54 @@ public class AvlSet<E extends Comparable<E>> extends BstSet<E> implements Sorted
      */
     @Override
     public void remove(E element) {
-        throw new UnsupportedOperationException("Students need to implement remove(E element)");
+        if (element == null) {
+            throw new IllegalArgumentException("Element is null in remove(E element)");
+        }
+        root = removeRecursive(element, (AVLNode<E>) root);
+        size--;
     }
 
     private AVLNode<E> removeRecursive(E element, AVLNode<E> n) {
-        throw new UnsupportedOperationException("Students need to implement removeRecursive(E element, AVLNode<E> n)");
+
+        if (n == null) {
+            size--;
+            return new AVLNode<>(element);
+        }
+        int cmp = c.compare(element, n.element);
+
+        if (cmp < 0) {
+            n.setLeft(removeRecursive(element, n.getLeft()));
+            int heightLeft = height(n.getLeft());
+            int heightRight = height(n.getRight());
+            if (Math.abs(heightLeft - heightRight) > 1) {
+                int cmp2 = c.compare(n.getRight().element, n.getLeft().element);
+                n = cmp2 < 0 ? leftRotation(n) : doubleLeftRotation(n);
+            }
+            return n;
+        } else if (cmp > 0) {
+            n.setRight(removeRecursive(element, n.getRight()));
+            n.height--;
+            int heightLeft = height(n.getLeft());
+            int heightRight = height(n.getRight());
+            if (Math.abs(heightRight - heightLeft) > 1) {
+                int cmp2 = c.compare(n.getLeft().element, n.getRight().element);
+                n = cmp2 < 0 ? rightRotation(n) : doubleRightRotation(n);
+            }
+            return n;
+        }
+
+        if ( n.getLeft()  == null ) {
+            return n.getRight();
+        }
+        else if (n.getRight() == null) {
+            return n.getLeft();
+        }
+        else if (n.getRight() != null && n.getLeft() != null) {
+            AVLNode<E> a = (AVLNode<E>) getMin(n.getRight());
+            a.left = n.getLeft();
+            return n.getRight();
+        }
+        return n;
     }
 
     // AVL tree rotation methods

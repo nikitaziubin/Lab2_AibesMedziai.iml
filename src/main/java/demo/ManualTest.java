@@ -3,6 +3,7 @@ package demo;
 import utils.*;
 import utils.Set;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 /*
@@ -50,7 +51,7 @@ public class ManualTest {
         Ks.oun(carsSet.toVisualizedString(""));
         //carsSet.remove(c9);
         //Ks.oun(carsSet.toVisualizedString(""));
-        /*Ks.oun("Testing containsAll: ");
+        Ks.oun("Testing containsAll: ");
         ParsableSortedSet<Car> carsSetToTest = new ParsableBstSet<>(Car::new);
         carsSetToTest.add(c1);
         carsSetToTest.add(c6);
@@ -78,7 +79,7 @@ public class ManualTest {
         b = carsSet.subSet(c6, c6);
         for (Object c : b) {
             System.out.println(c);
-        }*/
+        }
 
 
         Ks.oun("");
@@ -92,48 +93,23 @@ public class ManualTest {
         carsSet.retainAll(carsToIterate);
         Ks.oun(carsSet.toVisualizedString(""));
 
-        ParsableSortedSet<Car> carsSetCopy = (ParsableSortedSet<Car>) carsSet.clone();
 
-        carsSetCopy.add(c2);
-        carsSetCopy.add(c3);
-        carsSetCopy.add(c4);
-        Ks.oun("The copy of car set is expanded:");
-        Ks.oun(carsSetCopy.toVisualizedString(""));
-
-        c9.setMileage(10000);
-
-        Ks.oun("Original set:");
-        Ks.ounn(carsSet.toVisualizedString(""));
-
-        Ks.oun("Do elements exist in a set?");
-        for (Car c : carsArray) {
-            Ks.oun(c + ": " + carsSet.contains(c));
-        }
-        Ks.oun(c2 + ": " + carsSet.contains(c2));
-        Ks.oun(c3 + ": " + carsSet.contains(c3));
-        Ks.oun(c4 + ": " + carsSet.contains(c4));
-        Ks.oun("");
-
-        Ks.oun("Do elements exist in the copy of the set?");
-        for (Car c : carsArray) {
-            Ks.oun(c + ": " + carsSetCopy.contains(c));
-        }
-        Ks.oun(c2 + ": " + carsSetCopy.contains(c2));
-        Ks.oun(c3 + ": " + carsSetCopy.contains(c3));
-        Ks.oun(c4 + ": " + carsSetCopy.contains(c4));
-        Ks.oun("");
-
-        Ks.oun("Car set with iterator:");
-        Ks.oun("");
-        for (Car c : carsSet) {
-            Ks.oun(c);
-        }
         Ks.oun("");
         Ks.oun("Car set in the AVL tree:");
+        Car[] expandedCarsArray = new Car[8];
+        for (int i = 0; i < carsArray.length; i++) {
+            expandedCarsArray[i] = carsArray[i];
+        }
+        expandedCarsArray[carsArray.length  ] = c2;
+        expandedCarsArray[carsArray.length  + 1] = c3;
         ParsableSortedSet<Car> carsSetAvl = new ParsableAvlSet<>(Car::new);
-        for (Car c : carsArray) {
+        for (Car c : expandedCarsArray) {
             carsSetAvl.add(c);
         }
+        Ks.ounn(carsSetAvl.toVisualizedString(""));
+
+        carsSetAvl.remove(c7);
+
         Ks.ounn(carsSetAvl.toVisualizedString(""));
 
         Ks.oun("Car set with iterator:");
