@@ -79,18 +79,16 @@ public class AvlSet<E extends Comparable<E>> extends BstSet<E> implements Sorted
     }
 
     private AVLNode<E> removeRecursive(E element, AVLNode<E> n) {
-
         if (n == null) {
             size--;
             return new AVLNode<>(element);
         }
         int cmp = c.compare(element, n.element);
-
         if (cmp < 0) {
             n.setLeft(removeRecursive(element, n.getLeft()));
             int heightLeft = height(n.getLeft());
             int heightRight = height(n.getRight());
-            if (Math.abs(heightLeft - heightRight) > 1) {
+            if (Math.abs(heightLeft - heightRight) == 1) {
                 int cmp2 = c.compare(n.getRight().element, n.getLeft().element);
                 n = cmp2 < 0 ? leftRotation(n) : doubleLeftRotation(n);
             }
@@ -100,14 +98,38 @@ public class AvlSet<E extends Comparable<E>> extends BstSet<E> implements Sorted
             n.height--;
             int heightLeft = height(n.getLeft());
             int heightRight = height(n.getRight());
-            if (Math.abs(heightRight - heightLeft) > 1) {
+            if (Math.abs(heightRight - heightLeft) == 1) {
                 int cmp2 = c.compare(n.getLeft().element, n.getRight().element);
                 n = cmp2 < 0 ? rightRotation(n) : doubleRightRotation(n);
             }
             return n;
+        } else if (n == root) {
+            if ( n.getLeft() == null ) {
+                return n.getRight();
+            }
+            else if (n.getRight() == null) {
+                return n.getLeft();
+            }
+            else if (n.getRight() != null && n.getLeft() != null) {
+                AVLNode<E> a = (AVLNode<E>) getMin(n.getRight());
+                a.left = n.getLeft();
+                n = n.getRight();
+
+                int heightLeft = height(n.getLeft());
+                int heightRight = height(n.getRight());
+                if (heightLeft > heightRight) {
+                    int cmp2 = c.compare(n.getLeft().element, n.getRight().element);
+                    n = cmp2 < 0 ? rightRotation(n) : doubleRightRotation(n);
+                }
+                else {
+                    int cmp2 = c.compare(n.getRight().element, n.getLeft().element);
+                    n = cmp2 < 0 ? leftRotation(n) : doubleLeftRotation(n);
+                }
+                return  n;
+            }
         }
 
-        if ( n.getLeft()  == null ) {
+        if ( n.getLeft() == null ) {
             return n.getRight();
         }
         else if (n.getRight() == null) {

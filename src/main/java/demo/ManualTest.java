@@ -108,7 +108,7 @@ public class ManualTest {
         }
         Ks.ounn(carsSetAvl.toVisualizedString(""));
 
-        carsSetAvl.remove(c7);
+        carsSetAvl.remove(c6);
 
         Ks.ounn(carsSetAvl.toVisualizedString(""));
 
