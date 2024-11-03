@@ -11,6 +11,8 @@ import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 
+import java.util.Collections;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 @BenchmarkMode(Mode.AverageTime)
@@ -20,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 @Measurement(time = 1, timeUnit = TimeUnit.SECONDS)
 public class Benchmark {
 
-    @State(Scope.Benchmark)
+    /*@State(Scope.Benchmark)
     public static class FullSet {
 
         Car[] cars;
@@ -28,7 +30,8 @@ public class Benchmark {
 
         @Setup(Level.Iteration)
         public void generateElements(BenchmarkParams params) {
-            cars = Benchmark.generateElements(Integer.parseInt(params.getParam("elementCount")));
+            //cars = Benchmark.generateElements(Integer.parseInt(params.getParam("elementCount")));
+            cars = Benchmark.generateElements(1000);
         }
 
         @Setup(Level.Invocation)
@@ -36,16 +39,20 @@ public class Benchmark {
             carSet = new BstSet<>();
             addElements(cars, carSet);
         }
-    }
+    }*/
 
-    @Param({"10000", "20000", "40000", "80000"})
-    public int elementCount;
+    @Param({"1000", "2000", "4000", "8000"})
+    public int iterationCount;
 
     Car[] cars;
+    SortedSet<Car> carsThousandSet = new BstSet<>();
 
     @Setup(Level.Iteration)
     public void generateElements() {
-        cars = generateElements(elementCount);
+        cars = generateElements(1000);
+        for (Car car : cars) {
+            carsThousandSet.add(car);
+        }
     }
 
     static Car[] generateElements(int count) {
@@ -53,19 +60,37 @@ public class Benchmark {
     }
 
     @org.openjdk.jmh.annotations.Benchmark
-    public BstSet<Car> addBstRecursive() {
-        BstSet<Car> carSet = new BstSet<>(Car.byPrice);
-        addElements(cars, carSet);
-        return carSet;
+    public AvlSet<Car> addAvlAllRecursive() {
+        AvlSet<Car> carSetMoreThousend = new AvlSet<>(Car.byPrice);
+        for(int i = 0; i < iterationCount; i++)
+        {
+            carSetMoreThousend.addAll(carsThousandSet);
+        }
+        return carSetMoreThousend;
     }
 
     @org.openjdk.jmh.annotations.Benchmark
+    public BstSet<Car> addBstAllRecursive() {
+        BstSet<Car> carSetMoreThousend = new BstSet<>(Car.byPrice);
+        for(int i = 0; i < iterationCount; i++)
+        {
+            carSetMoreThousend.addAll(carsThousandSet);
+        }
+        return carSetMoreThousend;
+    }
+
+    /*@org.openjdk.jmh.annotations.Benchmark
     public BstSetIterative<Car> addBstIterative() {
         BstSetIterative<Car> carSet = new BstSetIterative<>(Car.byPrice);
         addElements(cars, carSet);
         return carSet;
     }
-
+@org.openjdk.jmh.annotations.Benchmark
+    public BstSet<Car> addBstRecursive() {
+        BstSet<Car> carSet = new BstSet<>(Car.byPrice);
+        addElements(car, carSet);
+        return carSet;
+    }
     @org.openjdk.jmh.annotations.Benchmark
     public AvlSet<Car> addAvlRecursive() {
         AvlSet<Car> carSet = new AvlSet<>(Car.byPrice);
@@ -85,7 +110,7 @@ public class Benchmark {
         for (Car car : carSet.cars) {
             carSet.carSet.size();
         }
-    }
+    }*/
     public static void addElements(Car[] carArray, SortedSet<Car> carSet) {
         for (Car car : carArray) {
             carSet.add(car);

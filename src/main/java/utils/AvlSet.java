@@ -33,6 +33,16 @@ public class AvlSet<E extends Comparable<E>> extends BstSet<E> implements Sorted
 
     }
 
+    @Override
+    public void addAll(Set<E> set) {
+        if (set == null) {
+            throw new IllegalArgumentException("Set is null in addAll(Set<E> set)");
+        }
+        for (E element : set) {
+            add(element);
+        }
+    }
+
     /**
      * A recursive method used as helper method for adding a new element to the set
      *
