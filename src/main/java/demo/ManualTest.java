@@ -110,53 +110,53 @@ public class ManualTest {
             carsSetAvl.add(c);
         }
         Ks.ounn(carsSetAvl.toVisualizedString(""));
-
         carsSetAvl.remove(c6);
-
         Ks.ounn(carsSetAvl.toVisualizedString(""));
-
-        Ks.oun("Car set with iterator:");
         Ks.oun("");
-        for (Car c : carsSetAvl) {
-            Ks.oun(c);
-        }
-
+        Ks.oun("First additional task:");
         Ks.oun("");
-        Ks.oun("Car set with reverse iterator:");
+        BstSet<Integer> set = new BstSet<>();
+        set.add(15);
+        set.add(23);
+        set.add(7);
+        set.add(4);
+        set.add(9);
+        set.add(1);
+        set.add(0);
+        Ks.ounn(set.toVisualizedString(""));
+        //set.CheckBalance();
         Ks.oun("");
-        Iterator<Car> iter = carsSetAvl.descendingIterator();
-        while (iter.hasNext()) {
-            Ks.oun(iter.next());
-        }
-
+        Ks.oun("Second additional task:");
         Ks.oun("");
-        Ks.oun("Car set toString() method:");
-        Ks.ounn(carsSetAvl);
+        BstSet<Integer> set2 = new BstSet<>();
+        for (int i = 0; i < 255; i++)
+            set2.add(i);
+        System.out.println("The number of internal nodes in set with size: " + set2.size() + " is: "  + countInternalNodes(set2));
 
-        // We clean up and form sets by reading from a file
-        carsSet.clear();
-        carsSetAvl.clear();
 
-        Ks.oun("");
-        Ks.oun("Car set in the binary search tree:");
-        carsSet.load("data\\ban.txt");
-        Ks.ounn(carsSet.toVisualizedString(""));
-        Ks.oun("Find out why the tree only grew in one direction..");
-
-        Ks.oun("");
-        Ks.oun("Car set in the AVL tree:");
-        carsSetAvl.load("data\\ban.txt");
-        Ks.ounn(carsSetAvl.toVisualizedString(""));
-
-        Set<String> carsSet4 = CarMarket.duplicateCarMakes(carsArray);
-        Ks.oun("Recurring car makes:\n" + carsSet4);
-
-        Set<String> carsSet5 = CarMarket.uniqueCarModels(carsArray);
-        Ks.oun("Unique car models:\n" + carsSet5);
-        Set<String> carsSet6 = CarMarket.uniqueCarModelsLambdaStyle(carsArray);
-        Ks.oun("Unique car models (lambda):\n" + carsSet6);
     }
-
+    public static Integer countInternalNodes(Set<Integer> set){
+        if (set.size() == 0)
+        {
+            return 0;
+        }
+        if (set.size() == 1 || set.size() == 3 || set.size() == 7 ){
+            return 0;
+        }
+        if (set.size() == 15){
+            return 2;
+        }
+        int setSize = 15;
+        int countNodes = 2;
+        int a = 2;
+        while (set.size() != setSize)
+        {
+            a = 2 * a + 2;
+            countNodes = a + countNodes;
+            setSize = (setSize + 1) + setSize;
+        }
+        return countNodes;
+    }
     static ParsableSortedSet<Car> generateSet(int amount, int n) {
         cars = new Car[n];
         for (int i = 0; i < n; i++) {

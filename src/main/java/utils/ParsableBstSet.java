@@ -20,6 +20,7 @@ public class ParsableBstSet<E extends Parsable<E>> extends BstSet<E>
      *
      * @param createFunction function used for element creation
      */
+
     public ParsableBstSet(Function<String, E> createFunction) {
         super();
         this.createFunction = createFunction;
