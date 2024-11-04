@@ -49,8 +49,11 @@ public class ManualTest {
         }
         Ks.oun("");
         Ks.oun(carsSet.toVisualizedString(""));
+        Ks.oun("");
+        Ks.oun("Testing remove Bst: ");
+        Ks.oun("");
         //carsSet.remove(c9);
-        //Ks.oun(carsSet.toVisualizedString(""));
+        Ks.oun(carsSet.toVisualizedString(""));
         Ks.oun("Testing containsAll: ");
         ParsableSortedSet<Car> carsSetToTest = new ParsableBstSet<>(Car::new);
         carsSetToTest.add(c1);

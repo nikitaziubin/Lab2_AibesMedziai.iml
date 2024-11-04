@@ -187,7 +187,6 @@ public class BstSet<E extends Comparable<E>> implements SortedSet<E>, Cloneable 
     }
 
     private BstNode<E> removeRecursive(E element, BstNode<E> node) {
-        //BstNode<E> nodeCurr = root;
         if (node == null) {
             throw new IllegalArgumentException("No element in binary search tree");
         }
