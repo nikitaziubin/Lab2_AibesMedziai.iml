@@ -483,22 +483,23 @@ public class BstSet<E extends Comparable<E>> implements SortedSet<E>, Cloneable 
         return tailSet;
     }
 
-    public boolean CheckBalance(){
-        int k = 0;
-        Iterator it = new IteratorBst(true);
-        while (it.hasNext()) {
-            BstNode curr = (BstNode) it.next();
-            if (curr.right != null && curr.left != null) {
-                k = k + 2;
-            } else if ((curr.left != null && curr.right == null) || curr.left == null && curr.right != null) {
-                k = k + 1;
-            }
-            System.out.println(it.next().toString());
-            System.out.print(k);
-        }
-        return false;
+    public boolean CheckBalance(int k) {
+        return CheckBalanceRecurcive(root, k) != -1;
     }
-
+    private int CheckBalanceRecurcive(BstNode<E> node, int k) {
+        if (node == null) {
+            return 0;
+        }
+        int leftHeight = CheckBalanceRecurcive(node.left, k);
+        int rightHeight = CheckBalanceRecurcive(node.right, k);
+        if (leftHeight == -1 || rightHeight == -1) {
+            return -1;
+        }
+        if (Math.abs(leftHeight - rightHeight) > k) {
+            return -1;
+        }
+        return Math.max(leftHeight, rightHeight) + 1;
+    }
 
     /**
      * Returns a natural iterator.

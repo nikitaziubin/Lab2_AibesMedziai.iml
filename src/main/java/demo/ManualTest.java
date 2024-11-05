@@ -115,16 +115,12 @@ public class ManualTest {
         Ks.oun("");
         Ks.oun("First additional task:");
         Ks.oun("");
-        BstSet<Integer> set = new BstSet<>();
-        set.add(15);
-        set.add(23);
-        set.add(7);
-        set.add(4);
-        set.add(9);
-        set.add(1);
-        set.add(0);
+        ParsableBstSet<Car> set = new ParsableBstSet<>(Car::new);
+        for( Car car : carsArray ){
+            set.add(car);
+        }
         Ks.ounn(set.toVisualizedString(""));
-        //set.CheckBalance();
+        Ks.ounn(set.CheckBalance(2));
         Ks.oun("");
         Ks.oun("Second additional task:");
         Ks.oun("");
@@ -135,6 +131,9 @@ public class ManualTest {
 
 
     }
+
+
+
     public static Integer countInternalNodes(Set<Integer> set){
         if (set.size() == 0)
         {
