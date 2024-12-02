@@ -21,26 +21,6 @@ import java.util.concurrent.TimeUnit;
 @Warmup(time = 1, timeUnit = TimeUnit.SECONDS)
 @Measurement(time = 1, timeUnit = TimeUnit.SECONDS)
 public class Benchmark {
-
-    /*@State(Scope.Benchmark)
-    public static class FullSet {
-
-        Car[] cars;
-        BstSet<Car> carSet;
-
-        @Setup(Level.Iteration)
-        public void generateElements(BenchmarkParams params) {
-            //cars = Benchmark.generateElements(Integer.parseInt(params.getParam("elementCount")));
-            cars = Benchmark.generateElements(1000);
-        }
-
-        @Setup(Level.Invocation)
-        public void fillCarSet(BenchmarkParams params) {
-            carSet = new BstSet<>();
-            addElements(cars, carSet);
-        }
-    }*/
-
     @Param({"1000", "2000", "4000", "8000"})
     public int iterationCount;
 
@@ -79,6 +59,7 @@ public class Benchmark {
         return carSetMoreThousend;
     }
 
+
     /*@org.openjdk.jmh.annotations.Benchmark
     public BstSetIterative<Car> addBstIterative() {
         BstSetIterative<Car> carSet = new BstSetIterative<>(Car.byPrice);
@@ -110,13 +91,14 @@ public class Benchmark {
         for (Car car : carSet.cars) {
             carSet.carSet.size();
         }
-    }*/
+    }
     public static void addElements(Car[] carArray, SortedSet<Car> carSet) {
         for (Car car : carArray) {
             carSet.add(car);
         }
     }
-
+    */
+    
     public static void main(String[] args) throws RunnerException {
         Options opt = new OptionsBuilder()
                 .include(Benchmark.class.getSimpleName())

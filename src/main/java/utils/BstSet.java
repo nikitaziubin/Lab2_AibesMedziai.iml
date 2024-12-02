@@ -1,9 +1,9 @@
 package utils;
 
+import demo.Car;
+
 import java.lang.reflect.Array;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.Stack;
+import java.util.*;
 
 /**
  * The binary search tree implementation of a ordered set.
@@ -64,6 +64,9 @@ public class BstSet<E extends Comparable<E>> implements SortedSet<E>, Cloneable 
         root = null;
         size = 0;
     }
+
+
+
 
     /**
      * Checks whether an element exists in the array.
@@ -371,7 +374,7 @@ public class BstSet<E extends Comparable<E>> implements SortedSet<E>, Cloneable 
      * Creates and returns a copy of the set.
      *
      * @return A copy of the set.
-     * @throws java.lang.CloneNotSupportedException
+     * @throws CloneNotSupportedException
      */
     @Override
     public Object clone() throws CloneNotSupportedException {
@@ -401,23 +404,26 @@ public class BstSet<E extends Comparable<E>> implements SortedSet<E>, Cloneable 
      * @param element - limit element.
      * @return the subset comprising elements up to a limit defined in the parameter element in a sorted manner (natural order) excluding the element.
      */
-    @Override
+
     public Set<E> headSet(E element) {
         SortedSet<E> headSet = new BstSet<>();
-        Iterator<E> it = new IteratorBst(true) ;
-        if (get(element) == null) {
-            throw new IllegalArgumentException("No element in binary search tree");
-        }
-        while (it.hasNext()){
-            E elementInBst = it.next();
-            if(elementInBst.equals(element)){
-                headSet.add(elementInBst);
-                break;
-            }
-            headSet.add(elementInBst);
-        }
+        headSetRecursive(root, element, headSet);
         return headSet;
     }
+    private void headSetRecursive(BstNode<E> node, E element, Set<E> headSet) {
+        if (node == null) {
+            return;
+        }
+        int cmp = c.compare(node.element, element);
+        if (cmp < 0) {
+            headSet.add(node.element);
+            headSetRecursive(node.left, element, headSet);
+            headSetRecursive(node.right, element, headSet);
+        } else {
+            headSetRecursive(node.left, element, headSet);
+        }
+    }
+
 
     /**
      * Returns the subset comprising elements from element1 (inclusive) to element2 (exclusive) in a sorted manner (natural order).
@@ -466,21 +472,23 @@ public class BstSet<E extends Comparable<E>> implements SortedSet<E>, Cloneable 
     @Override
     public Set<E> tailSet(E element) {
         SortedSet<E> tailSet = new BstSet<>();
-        Iterator<E> it = new IteratorBst(true) ;
-        boolean flag = false;
-        if (get(element) == null) {
-            throw new IllegalArgumentException("No element in binary search tree");
-        }
-        while (it.hasNext()){
-            E elementInBst = it.next();
-            if(elementInBst.equals(element)){
-                flag = true;
-            }
-            if (flag){
-                tailSet.add(elementInBst);
-            }
-        }
+        tailSetRecursive(root, element, tailSet);
         return tailSet;
+    }
+
+    private void tailSetRecursive(BstNode<E> node, E element, Set<E> tailSet) {
+        if (node == null) {
+            return;
+        }
+        int cmp = c.compare(node.element, element);
+        if (cmp < 0) {
+            tailSetRecursive(node.left, element, tailSet);
+        } else {
+            tailSet.add(node.element);
+            tailSetRecursive(node.left, element, tailSet);
+            tailSetRecursive(node.right, element, tailSet);
+
+        }
     }
 
     public boolean CheckBalance(int k) {
@@ -500,6 +508,59 @@ public class BstSet<E extends Comparable<E>> implements SortedSet<E>, Cloneable 
         }
         return Math.max(leftHeight, rightHeight) + 1;
     }
+
+    public List<E> findInternalNodes() {
+        List<E> internalNodes = new ArrayList<>();
+        findInternalNodesHelper(root, internalNodes);
+        return internalNodes;
+    }
+
+    private void findInternalNodesHelper(BstNode node, List internalNodes) {
+        if (node == null) {
+            return;
+        }
+
+        // Check if the node is an internal node (has both left and right children)
+        if ((node.left != null && node.right != null) && !isPerimeterNode(node, root)) {
+            internalNodes.add(node.element);
+        }
+
+        // Recursively traverse the left and right subtrees
+        findInternalNodesHelper(node.left, internalNodes);
+        findInternalNodesHelper(node.right, internalNodes);
+    }
+
+    private  boolean isPerimeterNode(BstNode node, BstNode root) {
+        // Root is part of the perimeter
+        if (node == root) {
+            return true;
+        }
+
+        // Check if the node is a leaf node (perimeter node)
+        if (node.left == null && node.right == null) {
+            return true;
+        }
+
+        // Check if the node is on the left or right boundary
+        BstNode current = root;
+        while (current != null) {
+            if (current == node) {
+                return true;
+            }
+            current = current.left;
+        }
+
+        current = root;
+        while (current != null) {
+            if (current == node) {
+                return true;
+            }
+            current = current.right;
+        }
+
+        return false;
+    }
+
 
     /**
      * Returns a natural iterator.

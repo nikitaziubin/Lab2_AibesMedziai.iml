@@ -79,7 +79,7 @@ public class AvlSet<E extends Comparable<E>> extends BstSet<E> implements Sorted
      *
      * @param element
      */
-    @Override
+    /*@Override
     public void remove(E element) {
         if (element == null) {
             throw new IllegalArgumentException("Element is null in remove(E element)");
@@ -139,6 +139,66 @@ public class AvlSet<E extends Comparable<E>> extends BstSet<E> implements Sorted
             return n;
         }
         return n;
+    }*/
+
+    public void remove(E element) {
+        if (element == null) {
+            throw new IllegalArgumentException("Element is null in remove(E element)");
+        }
+        root = removeRecursive(element, (AVLNode<E>) root);
+    }
+
+    private AVLNode<E> removeRecursive(E element, AVLNode<E> node) {
+        if (node == null) {
+            return null;
+        }
+
+        int cmp = c.compare(element, node.element);
+        if (cmp < 0) {
+            node.setLeft(removeRecursive(element, node.getLeft()));
+        } else if (cmp > 0) {
+            node.setRight(removeRecursive(element, node.getRight()));
+        } else {
+            // Node to be deleted found
+            if (node.left == null || node.right == null) {
+                node = (node.getLeft() != null) ? node.getLeft() : node.getRight();
+            } else {
+                AVLNode<E> minNode = (AVLNode<E>) getMin(node.getRight());
+                node.element = minNode.element;
+                node.setRight(removeRecursive(minNode.element, node.getRight()));
+            }
+        }
+        if (node == null) {
+            return null;
+        }
+        node.height = Math.max(height(node.getLeft()), height(node.getRight())) + 1;
+        return balance(node);
+    }
+
+    private AVLNode<E> balance(AVLNode<E> node) {
+        int balanceFactor = getBalanceFactor(node);
+
+        // Left heavy
+        if (balanceFactor > 1) {
+            if (getBalanceFactor(node.getLeft()) < 0) {
+                node.setLeft(leftRotation(node.getLeft()));
+            }
+            return rightRotation(node);
+        }
+
+        // Right heavy
+        if (balanceFactor < -1) {
+            if (getBalanceFactor(node.getRight()) > 0) {
+                node.setRight(rightRotation(node.getRight()));
+            }
+            return leftRotation(node);
+        }
+
+        return node;
+    }
+
+    private int getBalanceFactor(AVLNode<E> node) {
+        return (node == null) ? 0 : height(node.getLeft()) - height(node.getRight());
     }
 
     // AVL tree rotation methods
