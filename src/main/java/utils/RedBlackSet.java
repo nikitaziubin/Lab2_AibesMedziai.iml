@@ -78,12 +78,14 @@ public class RedBlackSet<E extends Comparable<E>> {
                 } else {
                     if (lastAdded == lastAdded.parent.right) {
                         // case2
-                        leftRotation(lastAdded);
+                        RedBlackNode<E> c = lastAdded.parent;
+                        leftRotation(lastAdded, lastAdded.parent.parent.parent);
+                        lastAdded = c;
                     }
                     // case3
                     lastAdded.parent.color = "b";
                     lastAdded.parent.parent.color = "r";
-                    rightRotation(lastAdded.parent.parent);
+                    rightRotation(lastAdded.parent.parent, lastAdded.parent.parent.parent);
                 }
             }
             // for right node
@@ -100,19 +102,23 @@ public class RedBlackSet<E extends Comparable<E>> {
                     if (lastAdded == lastAdded.parent.left) {
                         // case2
                         //rightRotation(lastAdded.parent);
-                        rightRotation(lastAdded.parent);
+                        RedBlackNode<E> c = lastAdded.parent;
+                        rightRotation(lastAdded.parent, lastAdded.parent.parent);
+                        lastAdded = c;
                     }
                     // case3
                     lastAdded.parent.color = "b";
                     lastAdded.parent.parent.color = "r";
-                    leftRotation(lastAdded.parent.parent);
+                    leftRotation(lastAdded.parent.parent, lastAdded.parent.parent.parent);
                 }
             }
         }
         root.color = "b";
     }
 
-    private void rightRotation(RedBlackNode<E> downNode) {
+    private void rightRotation(RedBlackNode<E> downNode, RedBlackNode<E> nodeToConnectRotatedChain) {
+        RedBlackNode<E> nodeWithOutChanges = new RedBlackNode<>(nodeToConnectRotatedChain.element, nodeToConnectRotatedChain.color,
+                nodeToConnectRotatedChain.left, nodeToConnectRotatedChain.right, nodeToConnectRotatedChain.parent);
         RedBlackNode<E> upNode = downNode.left;
         downNode.left = upNode.right;
         downNode.parent = upNode;
@@ -123,23 +129,12 @@ public class RedBlackSet<E extends Comparable<E>> {
             root = upNode;
             return;
         }
-        if (lastAdded.parent.parent.parent.element != "N")
-        {
-            int cmp = c.compare(lastAdded.parent.parent.parent.element, upNode.element);
-            if (cmp > 0) {
-                lastAdded.parent.parent.parent.left = upNode;
-            }
-            else {
-                lastAdded.parent.parent.parent.right = upNode;
-            }
-        }
-        else
-        {
-            lastAdded.parent.parent.parent.left = upNode;
-        }
+        connectChainAfterRotation(nodeToConnectRotatedChain, upNode, nodeWithOutChanges);
     }
 
-    private void leftRotation(RedBlackNode<E> downNode) {
+    private void leftRotation(RedBlackNode<E> downNode, RedBlackNode<E> nodeToConnectRotatedChain) {
+        RedBlackNode<E> nodeWithOutChanges = new RedBlackNode<>(nodeToConnectRotatedChain.element, nodeToConnectRotatedChain.color,
+                nodeToConnectRotatedChain.left, nodeToConnectRotatedChain.right, nodeToConnectRotatedChain.parent);
         RedBlackNode<E> upNode = downNode.right;
         downNode.right = upNode.left;
         downNode.parent = upNode;
@@ -150,21 +145,32 @@ public class RedBlackSet<E extends Comparable<E>> {
             root = upNode;
             return;
         }
-        if (lastAdded.parent.parent.parent.element != "N")
+        connectChainAfterRotation(nodeToConnectRotatedChain, upNode, nodeWithOutChanges);
+    }
+
+    private void connectChainAfterRotation(RedBlackNode<E> nodeToConnectRotatedChain, RedBlackNode<E> upNode, RedBlackNode<E> nodeWithOutChanges)
+    {
+        if (nodeToConnectRotatedChain.element != "N")
         {
-            int cmp = c.compare(lastAdded.parent.parent.parent.element, upNode.element);
+            int cmp = c.compare(nodeToConnectRotatedChain.element, upNode.element);
             if (cmp > 0) {
-                lastAdded.parent.parent.parent.left = upNode;
+                nodeToConnectRotatedChain.left = upNode;
             }
             else {
-                lastAdded.parent.parent.parent.right = upNode;
+                nodeToConnectRotatedChain.right = upNode;
+            }
+            if(nodeToConnectRotatedChain.element == nodeWithOutChanges.element)
+            {
+                upNode.parent = nodeToConnectRotatedChain;
             }
         }
         else
         {
-            lastAdded.parent.parent.parent.left = upNode;
+            nodeToConnectRotatedChain.left = upNode;
+            upNode.parent = nodeToConnectRotatedChain;
         }
     }
+
 
     private RedBlackNode<E> get(RedBlackNode<E> node, boolean findMax) {
         RedBlackNode<E> parent = null;
@@ -201,6 +207,13 @@ public class RedBlackSet<E extends Comparable<E>> {
             this.right = right;
             this.color = color;
             this.parent = null;
+        }
+        protected RedBlackNode(N element, String color, RedBlackNode<N> left, RedBlackNode<N> right, RedBlackNode<N> parent) {
+            this.element = element;
+            this.left = left;
+            this.right = right;
+            this.color = color;
+            this.parent = parent;
         }
     }
 

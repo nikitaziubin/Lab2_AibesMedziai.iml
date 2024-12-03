@@ -18,7 +18,9 @@ public class ManualTest {
     public static void main(String[] args) throws CloneNotSupportedException {
         RedBlackSet<Integer> redBlackSet = new RedBlackSet<Integer>();
         redBlackSet.add(9);
+        redBlackSetPrinter.printNode(redBlackSet.getRoot());
         redBlackSet.add(8);
+        redBlackSetPrinter.printNode(redBlackSet.getRoot());
         redBlackSet.add(3);
         redBlackSetPrinter.printNode(redBlackSet.getRoot());
         redBlackSet.add(6);
