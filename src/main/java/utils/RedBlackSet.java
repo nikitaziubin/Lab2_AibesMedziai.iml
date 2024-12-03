@@ -3,9 +3,12 @@ package utils;
 import java.util.*;
 
 public class RedBlackSet<E extends Comparable<E>> {
-
+    static RedBlackSet.BTreePrinter redBlackSetPrinter = new RedBlackSet.BTreePrinter();
+    public static final String RED = "\u001B[31m";
+    public static final String RESET = "\u001B[0m";
     private RedBlackNode<E> root = null;
     private RedBlackNode<E> nill = new RedBlackNode<E>((E)"N", "b", null, null);
+    RedBlackNode<E> specialNill = new RedBlackNode<E>((E)"N", "b", root, null);
     protected Comparator<? super E> c = Comparator.naturalOrder();
     RedBlackNode<E> lastAdded;
     public int size;
@@ -23,8 +26,9 @@ public class RedBlackSet<E extends Comparable<E>> {
             throw new IllegalArgumentException("Element is null in add(E element)");
         }
         if (root == null) {
+            size++;
             root = new RedBlackNode<>(element, "b", null, null);
-            root.parent = nill;
+            root.parent = specialNill;
             root.right = nill;
             root.left = nill;
             return;
@@ -74,12 +78,12 @@ public class RedBlackSet<E extends Comparable<E>> {
                 } else {
                     if (lastAdded == lastAdded.parent.right) {
                         // case2
-                        lastAdded.parent = leftRotation(lastAdded);
+                        leftRotation(lastAdded);
                     }
                     // case3
-                    lastAdded.parent.parent.parent = rightRotation(lastAdded.parent.parent);
                     lastAdded.parent.color = "b";
                     lastAdded.parent.parent.color = "r";
+                    rightRotation(lastAdded.parent.parent);
                 }
             }
             // for right node
@@ -95,38 +99,71 @@ public class RedBlackSet<E extends Comparable<E>> {
                 } else {
                     if (lastAdded == lastAdded.parent.left) {
                         // case2
-                        lastAdded.parent = rightRotation(lastAdded);
+                        //rightRotation(lastAdded.parent);
+                        rightRotation(lastAdded.parent);
                     }
                     // case3
-                    lastAdded.parent.parent.parent.right = leftRotation(lastAdded.parent.parent);
                     lastAdded.parent.color = "b";
                     lastAdded.parent.parent.color = "r";
+                    leftRotation(lastAdded.parent.parent);
                 }
             }
         }
         root.color = "b";
     }
 
-    private RedBlackNode<E> rightRotation(RedBlackNode<E> downNode) {
+    private void rightRotation(RedBlackNode<E> downNode) {
         RedBlackNode<E> upNode = downNode.left;
         downNode.left = upNode.right;
+        downNode.parent = upNode;
         upNode.right = downNode;
         if (downNode == root)
         {
+            upNode.parent = specialNill;
             root = upNode;
+            return;
         }
-        return upNode;
+        if (lastAdded.parent.parent.parent.element != "N")
+        {
+            int cmp = c.compare(lastAdded.parent.parent.parent.element, upNode.element);
+            if (cmp > 0) {
+                lastAdded.parent.parent.parent.left = upNode;
+            }
+            else {
+                lastAdded.parent.parent.parent.right = upNode;
+            }
+        }
+        else
+        {
+            lastAdded.parent.parent.parent.left = upNode;
+        }
     }
 
-    private RedBlackNode<E> leftRotation(RedBlackNode<E> downNode) {
+    private void leftRotation(RedBlackNode<E> downNode) {
         RedBlackNode<E> upNode = downNode.right;
         downNode.right = upNode.left;
+        downNode.parent = upNode;
         upNode.left = downNode;
         if (downNode == root)
         {
+            upNode.parent = specialNill;
             root = upNode;
+            return;
         }
-        return upNode;
+        if (lastAdded.parent.parent.parent.element != "N")
+        {
+            int cmp = c.compare(lastAdded.parent.parent.parent.element, upNode.element);
+            if (cmp > 0) {
+                lastAdded.parent.parent.parent.left = upNode;
+            }
+            else {
+                lastAdded.parent.parent.parent.right = upNode;
+            }
+        }
+        else
+        {
+            lastAdded.parent.parent.parent.left = upNode;
+        }
     }
 
     private RedBlackNode<E> get(RedBlackNode<E> node, boolean findMax) {
@@ -189,7 +226,18 @@ public class RedBlackSet<E extends Comparable<E>> {
             List<RedBlackNode<T>> newNodes = new ArrayList<RedBlackNode<T>>();
             for (RedBlackNode<T> node : nodes) {
                 if (node != null) {
-                    System.out.print(node.element + node.color);
+                    if (node.element == "N") {
+                     System.out.print("N");
+                    }
+                    else {
+                        if (Objects.equals(node.color, "r"))
+                        {
+                            System.out.print(RED + node.element + RESET);
+                        }
+                        else {
+                            System.out.print(node.element);
+                        }
+                    }
                     newNodes.add(node.left);
                     newNodes.add(node.right);
                 } else {
@@ -200,7 +248,7 @@ public class RedBlackSet<E extends Comparable<E>> {
 
                 BTreePrinter.printWhitespaces(betweenSpaces);
             }
-            System.out.println(" ");
+            System.out.println("");
 
             for (int i = 1; i <= endgeLines; i++) {
                 for (int j = 0; j < nodes.size(); j++) {
@@ -211,7 +259,7 @@ public class RedBlackSet<E extends Comparable<E>> {
                     }
 
                     if (nodes.get(j).left != null)
-                        System.out.print(" /");
+                        System.out.print("/");
                     else
                         BTreePrinter.printWhitespaces(1);
 

@@ -19,9 +19,13 @@ public class ManualTest {
         RedBlackSet<Integer> redBlackSet = new RedBlackSet<Integer>();
         redBlackSet.add(9);
         redBlackSet.add(8);
-        redBlackSet.add(7);
+        redBlackSet.add(3);
         redBlackSetPrinter.printNode(redBlackSet.getRoot());
         redBlackSet.add(6);
+        redBlackSetPrinter.printNode(redBlackSet.getRoot());
+        redBlackSet.add(5);
+        redBlackSetPrinter.printNode(redBlackSet.getRoot());
+        redBlackSet.add(7);
         redBlackSetPrinter.printNode(redBlackSet.getRoot());
         redBlackSet.add(10);
         redBlackSetPrinter.printNode(redBlackSet.getRoot());
@@ -30,6 +34,8 @@ public class ManualTest {
         redBlackSet.add(11);
         redBlackSetPrinter.printNode(redBlackSet.getRoot());
         redBlackSet.add(14);
+        redBlackSetPrinter.printNode(redBlackSet.getRoot());
+        redBlackSet.add(21);
         redBlackSetPrinter.printNode(redBlackSet.getRoot());
     }
 }
