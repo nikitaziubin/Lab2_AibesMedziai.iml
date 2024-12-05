@@ -39,6 +39,20 @@ public class ManualTest {
         redBlackSetPrinter.printNode(redBlackSet.getRoot());
         redBlackSet.add(21);
         redBlackSetPrinter.printNode(redBlackSet.getRoot());
+        redBlackSet.add(20);
+        redBlackSetPrinter.printNode(redBlackSet.getRoot());
+
+        //System.out.println("Is 20 in redBlackSet: " + redBlackSet.find(20));
+        //System.out.println("Is 3 in redBlackSet: " + redBlackSet.find(3));
+        //System.out.println("Is 90 in redBlackSet: " + redBlackSet.find(90));
+
+        //redBlackSet.remove(13);
+        redBlackSet.remove(5);
+        redBlackSetPrinter.printNode(redBlackSet.getRoot());
+        redBlackSet.remove( 3);
+        redBlackSetPrinter.printNode(redBlackSet.getRoot());
+        redBlackSet.remove( 20);
+        redBlackSetPrinter.printNode(redBlackSet.getRoot());
     }
 }
 
