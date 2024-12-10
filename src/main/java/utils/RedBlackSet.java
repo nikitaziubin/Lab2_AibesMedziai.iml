@@ -4,15 +4,16 @@ import java.util.*;
 
 public class RedBlackSet<E extends Comparable<E>> {
     static RedBlackSet.BTreePrinter redBlackSetPrinter = new RedBlackSet.BTreePrinter();
-    public static final String RED = "\u001B[31m";
+    public static final String RED1 = "\u001B[31m";
     public static final String RESET = "\u001B[0m";
     private RedBlackNode<E> root = null;
-    //private RedBlackNode<E> nillLeftRight = new RedBlackNode<E>((E)"N", "b", null, null);
-    private RedBlackNode<E> nill = new RedBlackNode<E>((E)"N", "b", null, null);
-    protected RedBlackNode<E> specialNill = new RedBlackNode<E>((E)"N", "b", root, null);
+    private RedBlackNode<E> nill = new RedBlackNode<E>((E)"N", BLACK, null, null);
+    RedBlackNode<E> specialNill = new RedBlackNode<E>((E)"N", BLACK, root, null);
     protected Comparator<? super E> c = Comparator.naturalOrder();
     RedBlackNode<E> lastAdded;
     public int size;
+    private static final String RED = "r";
+    private static final String BLACK = "b";
 
     public RedBlackSet() {
 
@@ -28,7 +29,7 @@ public class RedBlackSet<E extends Comparable<E>> {
         }
         if (root == null) {
             size++;
-            root = new RedBlackNode<>(element, "b", null, null);
+            root = new RedBlackNode<>(element, BLACK, null, null);
             root.parent = specialNill;
             root.right = nill;
             root.left = nill;
@@ -39,13 +40,13 @@ public class RedBlackSet<E extends Comparable<E>> {
     }
 
     private RedBlackNode<E> addRecursive(E element, RedBlackNode<E> node) {
-        if (node.element == "N") {
+        if (node == nill) {
             size++;
             RedBlackNode<E> redBlackNode = new RedBlackNode<E>(element);
-            redBlackNode.left = new RedBlackNode<>(nill);
+            redBlackNode.left = nill;
             redBlackNode.left.parent = redBlackNode;
 
-            redBlackNode.right = new RedBlackNode<>(nill);
+            redBlackNode.right = nill;
             redBlackNode.right.parent = redBlackNode;
             lastAdded = redBlackNode;
             return redBlackNode;
@@ -68,15 +69,15 @@ public class RedBlackSet<E extends Comparable<E>> {
     }
 
     private void fixup(RedBlackNode<E> node) {
-        while (Objects.equals(lastAdded.parent.color, "r")) {
+        while (Objects.equals(lastAdded.parent.color, RED)) {
             // for right node left node
             if (lastAdded.parent == lastAdded.parent.parent.left) {
                 RedBlackNode<E> uncle = lastAdded.parent.parent.right;
-                if (uncle.color.equals("r")) {
+                if (uncle.color.equals(RED)) {
                     //case 1
-                    lastAdded.parent.color = "b";
-                    lastAdded.parent.parent.color = "r";
-                    uncle.color = "b";
+                    lastAdded.parent.color = BLACK;
+                    lastAdded.parent.parent.color = RED;
+                    uncle.color = BLACK;
                     lastAdded = lastAdded.parent.parent;
                     continue;
                 } else {
@@ -87,19 +88,19 @@ public class RedBlackSet<E extends Comparable<E>> {
                         lastAdded = c;
                     }
                     // case3
-                    lastAdded.parent.color = "b";
-                    lastAdded.parent.parent.color = "r";
+                    lastAdded.parent.color = BLACK;
+                    lastAdded.parent.parent.color = RED;
                     rightRotation(lastAdded.parent.parent, lastAdded.parent.parent.parent);
                 }
             }
             // for right node
             else {
                 RedBlackNode<E> uncle = lastAdded.parent.parent.left;
-                if (uncle.color.equals("r")) {
+                if (uncle.color.equals(RED)) {
                     //case 1
-                    lastAdded.parent.color = "b";
-                    lastAdded.parent.parent.color = "r";
-                    uncle.color = "b";
+                    lastAdded.parent.color = BLACK;
+                    lastAdded.parent.parent.color = RED;
+                    uncle.color = BLACK;
                     lastAdded = lastAdded.parent.parent;
                     continue;
                 } else {
@@ -110,13 +111,13 @@ public class RedBlackSet<E extends Comparable<E>> {
                         lastAdded = c;
                     }
                     // case3
-                    lastAdded.parent.color = "b";
-                    lastAdded.parent.parent.color = "r";
+                    lastAdded.parent.color = BLACK;
+                    lastAdded.parent.parent.color = RED;
                     leftRotation(lastAdded.parent.parent, lastAdded.parent.parent.parent);
                 }
             }
         }
-        root.color = "b";
+        root.color = BLACK;
     }
 
     private void rightRotation(RedBlackNode<E> downNode, RedBlackNode<E> nodeToConnectRotatedChain) {
@@ -168,7 +169,7 @@ public class RedBlackSet<E extends Comparable<E>> {
 
     private RedBlackNode<E> get(RedBlackNode<E> node, boolean findMax) {
         RedBlackNode<E> parent = null;
-        while (node.element != "N") {
+        while (node != nill) {
             parent = node;
             node = (findMax) ? node.right : node.left;
         }
@@ -199,16 +200,64 @@ public class RedBlackSet<E extends Comparable<E>> {
     }
 
     private RedBlackNode<E> lastDeleted;
-    private  String originalColorOfDeletedNode;
+    private RedBlackNode<E> y;
+    private RedBlackNode<E> deleted;
+    private String originalColorOfDeletedNode;
     public void remove(E element) {
         removeRecursive(element, root);
-        size--;
+        removeRecursiveFromBook(deleted);
         BTreePrinter.printNode(root);
-        if (originalColorOfDeletedNode == "b")
+        size--;
+
+        if (originalColorOfDeletedNode == BLACK)
         {
-            deleteionFixUp(lastDeleted);
+            deleteionFixUp();
         }
     }
+
+    private void removeRecursiveFromBook(RedBlackNode<E> nodeThatWasDeleted) {
+        y = nodeThatWasDeleted;
+        originalColorOfDeletedNode = nodeThatWasDeleted.color;
+        if (nodeThatWasDeleted.left == nill)
+        {
+            lastDeleted = nodeThatWasDeleted.right;
+            rbTransplant(nodeThatWasDeleted, nodeThatWasDeleted.right);
+        }
+        else if (nodeThatWasDeleted.right == nill){
+            lastDeleted = nodeThatWasDeleted.left;
+            rbTransplant(nodeThatWasDeleted, nodeThatWasDeleted.left);
+        }
+        else {
+            y = get(nodeThatWasDeleted.right, false);
+            originalColorOfDeletedNode = y.color;
+            lastDeleted = y.right;
+            if (y != nodeThatWasDeleted.right){
+                rbTransplant(y, y.right);
+                y.right = nodeThatWasDeleted.right;
+                y.right.parent = y;
+            }
+            else {
+                lastDeleted.parent = y;
+                rbTransplant(nodeThatWasDeleted, y);
+                y.left = nodeThatWasDeleted.left;
+                y.left.parent = y;
+                y.color = nodeThatWasDeleted.color;
+            }
+        }
+    }
+    private void rbTransplant(RedBlackNode<E> u, RedBlackNode<E> v) {
+        if (u.parent == nill)
+        {
+            root = v;
+        } else if (u == u.parent.left) {
+            u.parent.left = v;
+        }
+        else{
+            u.parent.right = v;
+        }
+        v.parent = u.parent;
+    }
+
     private RedBlackNode<E> removeRecursive(E element, RedBlackNode<E> node) {
         if (node == null) {
             throw new IllegalArgumentException("No element in binary search tree");
@@ -221,75 +270,58 @@ public class RedBlackSet<E extends Comparable<E>> {
             node.right = removeRecursive(element, node.right);
             return node;
         }
-        originalColorOfDeletedNode = node.color;
-        if (node.left.element == "N" ) {
+        if (node.left == nill ) {
             node.right.parent = node.parent;
-            lastDeleted = node.right;
+            deleted = node;
             return node.right;
         }
-        else if (node.right.element == "N") {
+        else if (node.right == nill) {
             node.left.parent = node.parent;
-            lastDeleted = node.left;
+            deleted = node;
             return node.left;
         }
-        else if (node.right.element != "N" && node.left.element != "N") {
-            RedBlackNode<E> a = get(node.right, false);
+        else if (node.right != nill && node.left != nill) {
+            /*RedBlackNode<E> a = get(node.right, false);
             a.left = node.left;
             node.left.parent = a;
-
-            if (a != node.right) {
-                a.parent.left = a.right;
-                if (a.right != nill) {
-                    a.right.parent = a.parent;
-                }
-                a.right = node.right;
-                node.right.parent = a;
-            }
-
-            a.parent = node.parent;
-            RedBlackNode<E> nil = new RedBlackNode<>(nill);
-            nil.parent = a;
-            lastDeleted = (a.right.element != "N" && a.right != null) ? a.right : a;
-            BTreePrinter.printNode(root);
-            return a;
-            //a.parent = node.parent;
-            //lastDeleted = node.right;
-            //return node.right;
+            deleted = node;
+            return node.right;*/
+            deleted = node;
+            return node;
         }
-
         return null;
     }
-    private void deleteionFixUp(RedBlackNode<E> node)
+   private void deleteionFixUp()
     {
-        while (lastDeleted != root && lastDeleted.color == "b")
+        while (lastDeleted != root && lastDeleted.color == BLACK)
         {
             if (lastDeleted == lastDeleted.parent.left)
             {
                 //for the left node
                 RedBlackNode<E> siblingOfLastDeleted = lastDeleted.parent.right;
-                if (siblingOfLastDeleted.color == "r")
+                if (siblingOfLastDeleted.color == RED)
                 {
-                    siblingOfLastDeleted.color = "b";
-                    lastDeleted.parent.color = "r";
+                    siblingOfLastDeleted.color = BLACK;
+                    lastDeleted.parent.color = RED;
                     leftRotation(lastDeleted.parent, lastDeleted.parent.parent);
                     siblingOfLastDeleted = lastDeleted.parent.right;
                 }
-                if (siblingOfLastDeleted.left.color == "b" && siblingOfLastDeleted.right.color == "b")
+                if (siblingOfLastDeleted.left.color == BLACK && siblingOfLastDeleted.right.color == BLACK)
                 {
-                    siblingOfLastDeleted.color = "r";
+                    siblingOfLastDeleted.color = RED;
                     lastDeleted = lastDeleted.parent;
                 }
                 else {
-                    if (siblingOfLastDeleted.right.color == "b")
+                    if (siblingOfLastDeleted.right.color == BLACK)
                     {
-                        siblingOfLastDeleted.left.color = "b";
-                        siblingOfLastDeleted.color = "r";
+                        siblingOfLastDeleted.left.color = BLACK;
+                        siblingOfLastDeleted.color = RED;
                         rightRotation(siblingOfLastDeleted, lastDeleted.parent);
                         siblingOfLastDeleted = lastDeleted.parent.right;
                     }
                     siblingOfLastDeleted.color = lastDeleted.parent.color;
-                    lastDeleted.parent.color = "b";
-                    siblingOfLastDeleted.right.color = "b";
+                    lastDeleted.parent.color = BLACK;
+                    siblingOfLastDeleted.right.color = BLACK;
                     leftRotation(lastDeleted.parent, lastDeleted.parent.parent);
                     lastDeleted = root;
                 }
@@ -297,38 +329,38 @@ public class RedBlackSet<E extends Comparable<E>> {
             else {
                 //for the right node
                 RedBlackNode<E> siblingOfLastDeleted = lastDeleted.parent.left;
-                if (siblingOfLastDeleted.color == "r")
+                if (siblingOfLastDeleted.color == RED)
                 {
-                    siblingOfLastDeleted.color = "b";
-                    lastDeleted.parent.color = "r";
+                    siblingOfLastDeleted.color = BLACK;
+                    lastDeleted.parent.color = RED;
                     rightRotation(lastDeleted.parent, lastDeleted.parent.parent);
                     siblingOfLastDeleted = lastDeleted.parent.left;
-
                 }
-                if (siblingOfLastDeleted.right.color == "b" && siblingOfLastDeleted.left.color == "b")
+                if (siblingOfLastDeleted.right.color == BLACK && siblingOfLastDeleted.left.color == BLACK)
                 {
-                    siblingOfLastDeleted.color = "r";
+                    siblingOfLastDeleted.color = RED;
                     lastDeleted = lastDeleted.parent;
                 }
                 else {
-                    if (siblingOfLastDeleted.left.color == "b")
+                    if (siblingOfLastDeleted.left.color == BLACK)
                     {
-                        siblingOfLastDeleted.right.color = "b";
-                        siblingOfLastDeleted.left.color = "r";
+                        siblingOfLastDeleted.right.color = BLACK;
+                        siblingOfLastDeleted.left.color = RED;
                         leftRotation(siblingOfLastDeleted, lastDeleted.parent);
                         siblingOfLastDeleted = lastDeleted.parent.left;
                     }
                     siblingOfLastDeleted.color = lastDeleted.parent.color;
-                    lastDeleted.parent.color = "b";
-                    siblingOfLastDeleted.left.color = "b";
+                    lastDeleted.parent.color = BLACK;
+                    siblingOfLastDeleted.left.color = BLACK;
                     rightRotation(lastDeleted.parent, lastDeleted.parent.parent);
                     lastDeleted = root;
                 }
 
             }
         }
-        lastDeleted.color = "b";
+        lastDeleted.color = BLACK;
     }
+
     protected static class RedBlackNode<N> {
         protected N element;
         protected RedBlackNode<N> left;
@@ -342,7 +374,7 @@ public class RedBlackSet<E extends Comparable<E>> {
             this.element = element;
             this.left = null;
             this.right = null;
-            this.color = "r";
+            this.color = RED;
             this.parent = null;
         }
         protected RedBlackNode(N element, String color, RedBlackNode<N> left, RedBlackNode<N> right) {
@@ -361,8 +393,8 @@ public class RedBlackSet<E extends Comparable<E>> {
         }
         protected RedBlackNode(RedBlackNode<N> node) {
             this.element = node.element;
-            this.left = new RedBlackNode<N>((N)"N", "b", null, null);
-            this.right = new RedBlackNode<N>((N)"N", "b", null, null);;
+            this.left = node.left;
+            this.right = node.right;
             this.color = node.color;
             this.parent = node.parent;
         }
@@ -394,9 +426,9 @@ public class RedBlackSet<E extends Comparable<E>> {
                      System.out.print("N");
                     }
                     else {
-                        if (Objects.equals(node.color, "r"))
+                        if (Objects.equals(node.color, RED))
                         {
-                            System.out.print(RED + node.element + RESET);
+                            System.out.print(RED1 + node.element + RESET);
                         }
                         else {
                             System.out.print(node.element);
