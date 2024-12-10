@@ -46,7 +46,6 @@ public class ManualTest {
         //System.out.println("Is 3 in redBlackSet: " + redBlackSet.find(3));
         //System.out.println("Is 90 in redBlackSet: " + redBlackSet.find(90));
 
-        //redBlackSet.remove(13);
         redBlackSet.remove(5);
         redBlackSetPrinter.printNode(redBlackSet.getRoot());
         redBlackSet.remove( 3);

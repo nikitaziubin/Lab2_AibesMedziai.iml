@@ -206,9 +206,7 @@ public class RedBlackSet<E extends Comparable<E>> {
     public void remove(E element) {
         removeRecursive(element, root);
         removeRecursiveFromBook(deleted);
-        BTreePrinter.printNode(root);
         size--;
-
         if (originalColorOfDeletedNode == BLACK)
         {
             deleteionFixUp();
@@ -271,14 +269,12 @@ public class RedBlackSet<E extends Comparable<E>> {
             return node;
         }
         if (node.left == nill ) {
-            node.right.parent = node.parent;
             deleted = node;
-            return node.right;
+            return node;
         }
         else if (node.right == nill) {
-            node.left.parent = node.parent;
             deleted = node;
-            return node.left;
+            return node;
         }
         else if (node.right != nill && node.left != nill) {
             /*RedBlackNode<E> a = get(node.right, false);
