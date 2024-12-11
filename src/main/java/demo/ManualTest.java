@@ -56,6 +56,8 @@ public class ManualTest {
         redBlackSetPrinter.printNode(redBlackSet.getRoot());
         redBlackSet.remove( 14);
         redBlackSetPrinter.printNode(redBlackSet.getRoot());
+        redBlackSet.remove( 9);
+        redBlackSetPrinter.printNode(redBlackSet.getRoot());
     }
 }
 
