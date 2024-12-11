@@ -24,7 +24,7 @@ public class RedBlackSet<E extends Comparable<E>> {
 
     }
 
-    public RedBlackNode<E> getRoot () {
+    public RedBlackNode<E> getRoot() {
         return root;
     }
 
@@ -89,7 +89,7 @@ public class RedBlackSet<E extends Comparable<E>> {
                     if (lastAdded == lastAdded.parent.right) {
                         // case2
                         RedBlackNode<E> c = lastAdded.parent;
-                        leftRotation(lastAdded, lastAdded.parent.parent.parent);
+                        leftRotation(lastAdded.parent, lastAdded.parent.parent.parent);
                         lastAdded = c;
                     }
                     // case3
@@ -128,11 +128,11 @@ public class RedBlackSet<E extends Comparable<E>> {
     private void leftRotation(RedBlackNode<E> x){
         RedBlackNode<E> y = x.right;
         x.right = y.left;
-        if (y.left != nill){
+        if (y.left != nill && y.left != null){
             y.left.parent = x;
         }
         y.parent = x.parent;
-        if (x.parent == nill){
+        if (x.parent == specialNill){
             root = y;
         }
         else if(x == x.parent.left) {
@@ -145,25 +145,24 @@ public class RedBlackSet<E extends Comparable<E>> {
         x.parent = y;
     }
 
-    private void rightRotation(RedBlackNode<E> x){
+    private void rightRotation(RedBlackNode<E> x) {
         RedBlackNode<E> y = x.left;
         x.left = y.right;
-        if (y.right != nill){
+        if (y.right != nill && y.right != null) {
             y.right.parent = x;
         }
         y.parent = x.parent;
-        if (x.parent == nill){
+        if (x.parent == specialNill) {
             root = y;
-        }
-        else if(x == x.parent.right) {
-            x.parent.right = y;
-        }
-        else {
+        } else if (x == x.parent.left) {
             x.parent.left = y;
+        } else {
+            x.parent.right = y;
         }
         y.right = x;
         x.parent = y;
     }
+
 
     private void rightRotation(RedBlackNode<E> downNode, RedBlackNode<E> nodeToConnectRotatedChain) {
         RedBlackNode<E> nodeWithOutChanges = new RedBlackNode<>(nodeToConnectRotatedChain.element, nodeToConnectRotatedChain.color,
@@ -265,8 +264,10 @@ public class RedBlackSet<E extends Comparable<E>> {
     private String originalColorOfDeletedNode;
     public void remove(E element) {
         removeRecursive(element, root);
+        if ( deleted == null ){
+            return;
+        }
         removeRecursiveFromBook(deleted);
-        BTreePrinter.printNode(root);
         size--;
         if (originalColorOfDeletedNode == BLACK)
         {
@@ -297,11 +298,11 @@ public class RedBlackSet<E extends Comparable<E>> {
             }
             else {
                 lastDeleted.parent = y;
-                rbTransplant(nodeThatWasDeleted, y);
-                y.left = nodeThatWasDeleted.left;
-                y.left.parent = y;
-                y.color = nodeThatWasDeleted.color;
             }
+            rbTransplant(nodeThatWasDeleted, y);
+            y.left = nodeThatWasDeleted.left;
+            y.left.parent = y;
+            y.color = nodeThatWasDeleted.color;
         }
     }
     private void rbTransplant(RedBlackNode<E> u, RedBlackNode<E> v) {
@@ -318,8 +319,8 @@ public class RedBlackSet<E extends Comparable<E>> {
     }
 
     private RedBlackNode<E> removeRecursive(E element, RedBlackNode<E> node) {
-        if (node == null) {
-            throw new IllegalArgumentException("No element in binary search tree");
+        if (node == nill) {
+            return nill;
         }
         int cmp = c.compare(element, node.element);
         if (cmp < 0) {
@@ -343,65 +344,8 @@ public class RedBlackSet<E extends Comparable<E>> {
         }
         return null;
     }
-    private void deleteionFixUp() {
-        while (lastDeleted != root && lastDeleted.color == BLACK) {
-            boolean isLeftChild = lastDeleted == lastDeleted.parent.left;
-            RedBlackNode<E> sibling = isLeftChild ? lastDeleted.parent.right : lastDeleted.parent.left;
 
-            // Ensure sibling and its children are valid
-            if (sibling == null || sibling.left == null || sibling.right == null) {
-                throw new IllegalStateException("Sibling or its children are not properly initialized");
-            }
-
-            // Case 1: Sibling is red
-            if (sibling.color == RED) {
-                sibling.color = BLACK;
-                lastDeleted.parent.color = RED;
-                if (isLeftChild) {
-                    leftRotation(lastDeleted.parent, lastDeleted.parent.parent);
-                } else {
-                    rightRotation(lastDeleted.parent, lastDeleted.parent.parent);
-                }
-                sibling = isLeftChild ? lastDeleted.parent.right : lastDeleted.parent.left;
-            }
-
-            // Case 2: Both sibling's children are black
-            if (sibling.left.color == BLACK && sibling.right.color == BLACK) {
-                sibling.color = RED;
-                lastDeleted = lastDeleted.parent;
-            } else {
-                // Case 3: One of sibling's children is red
-                if (isLeftChild && sibling.right.color == BLACK) {
-                    sibling.left.color = BLACK;
-                    sibling.color = RED;
-                    rightRotation(sibling, lastDeleted.parent);
-                    sibling = lastDeleted.parent.right;
-                } else if (!isLeftChild && sibling.left.color == BLACK) {
-                    sibling.right.color = BLACK;
-                    sibling.color = RED;
-                    leftRotation(sibling, lastDeleted.parent);
-                    sibling = lastDeleted.parent.left;
-                }
-
-                // Case 4: Sibling's far child is red
-                sibling.color = lastDeleted.parent.color;
-                lastDeleted.parent.color = BLACK;
-                if (isLeftChild) {
-                    sibling.right.color = BLACK;
-                    leftRotation(lastDeleted.parent, lastDeleted.parent.parent);
-                } else {
-                    sibling.left.color = BLACK;
-                    rightRotation(lastDeleted.parent, lastDeleted.parent.parent);
-                }
-                lastDeleted = root;
-            }
-        }
-
-        if (lastDeleted != null) {
-            lastDeleted.color = BLACK;
-        }
-    }
-   /*private void deleteionFixUp()
+   private void deleteionFixUp()
     {
         while (lastDeleted != root && lastDeleted.color == BLACK)
         {
@@ -413,10 +357,10 @@ public class RedBlackSet<E extends Comparable<E>> {
                 {
                     siblingOfLastDeleted.color = BLACK;
                     lastDeleted.parent.color = RED;
-                    leftRotation(lastDeleted.parent, lastDeleted.parent.parent);
+                    leftRotation(lastDeleted.parent);
                     siblingOfLastDeleted = lastDeleted.parent.right;
                 }
-                if (siblingOfLastDeleted.left.color == BLACK && siblingOfLastDeleted.right.color == BLACK)
+                if (siblingOfLastDeleted != null && (siblingOfLastDeleted.right == null || siblingOfLastDeleted.left == null || (siblingOfLastDeleted.right.color == BLACK && siblingOfLastDeleted.left.color == BLACK)))
                 {
                     siblingOfLastDeleted.color = RED;
                     lastDeleted = lastDeleted.parent;
@@ -426,16 +370,15 @@ public class RedBlackSet<E extends Comparable<E>> {
                     {
                         siblingOfLastDeleted.left.color = BLACK;
                         siblingOfLastDeleted.color = RED;
-                        rightRotation(siblingOfLastDeleted, lastDeleted.parent);
+                        rightRotation(siblingOfLastDeleted);
                         siblingOfLastDeleted = lastDeleted.parent.right;
                     }
-                    BTreePrinter.printNode(root);
                     siblingOfLastDeleted.color = lastDeleted.parent.color;
                     lastDeleted.parent.color = BLACK;
                     if (siblingOfLastDeleted.right != null){
                         siblingOfLastDeleted.right.color = BLACK;
                     }
-                    leftRotation(lastDeleted.parent, lastDeleted.parent.parent);
+                    leftRotation(lastDeleted.parent);
                     lastDeleted = root;
                 }
             }
@@ -446,10 +389,11 @@ public class RedBlackSet<E extends Comparable<E>> {
                 {
                     siblingOfLastDeleted.color = BLACK;
                     lastDeleted.parent.color = RED;
-                    rightRotation(lastDeleted.parent, lastDeleted.parent.parent);
+                    rightRotation(lastDeleted.parent);
                     siblingOfLastDeleted = lastDeleted.parent.left;
                 }
-                if (siblingOfLastDeleted.right.color == BLACK && siblingOfLastDeleted.left.color == BLACK)
+                //if (siblingOfLastDeleted.right.color == BLACK && siblingOfLastDeleted.left.color == BLACK)
+                if (siblingOfLastDeleted != null && (siblingOfLastDeleted.right == null || siblingOfLastDeleted.left == null || (siblingOfLastDeleted.right.color == BLACK && siblingOfLastDeleted.left.color == BLACK)))
                 {
                     siblingOfLastDeleted.color = RED;
                     lastDeleted = lastDeleted.parent;
@@ -459,20 +403,20 @@ public class RedBlackSet<E extends Comparable<E>> {
                     {
                         siblingOfLastDeleted.right.color = BLACK;
                         siblingOfLastDeleted.left.color = RED;
-                        leftRotation(siblingOfLastDeleted, lastDeleted.parent);
+                        leftRotation(siblingOfLastDeleted);
                         siblingOfLastDeleted = lastDeleted.parent.left;
                     }
                     siblingOfLastDeleted.color = lastDeleted.parent.color;
                     lastDeleted.parent.color = BLACK;
                     siblingOfLastDeleted.left.color = BLACK;
-                    rightRotation(lastDeleted.parent, lastDeleted.parent.parent);
+                    rightRotation(lastDeleted.parent);
                     lastDeleted = root;
                 }
 
             }
         }
         lastDeleted.color = BLACK;
-    }*/
+    }
 
     protected static class RedBlackNode<N> {
         protected N element;

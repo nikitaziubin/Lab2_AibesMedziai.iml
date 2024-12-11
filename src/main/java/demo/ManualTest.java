@@ -42,9 +42,16 @@ public class ManualTest {
         redBlackSet.add(20);
         redBlackSetPrinter.printNode(redBlackSet.getRoot());
 
-        //System.out.println("Is 20 in redBlackSet: " + redBlackSet.find(20));
-        //System.out.println("Is 3 in redBlackSet: " + redBlackSet.find(3));
-        //System.out.println("Is 90 in redBlackSet: " + redBlackSet.find(90));
+        System.out.println("Is 20 in redBlackSet: " + redBlackSet.find(20));
+        System.out.println("Is 3 in redBlackSet: " + redBlackSet.find(3));
+        System.out.println("Is 90 in redBlackSet: " + redBlackSet.find(90));
+
+        System.out.println("Size of the redBlackSet is: " + redBlackSet.size);
+
+        redBlackSet.remove(1);
+        redBlackSetPrinter.printNode(redBlackSet.getRoot());
+
+        System.out.println("Size of the redBlackSet is: " + redBlackSet.size);
 
         redBlackSet.remove(5);
         redBlackSetPrinter.printNode(redBlackSet.getRoot());
@@ -57,6 +64,16 @@ public class ManualTest {
         redBlackSet.remove( 14);
         redBlackSetPrinter.printNode(redBlackSet.getRoot());
         redBlackSet.remove( 9);
+        redBlackSetPrinter.printNode(redBlackSet.getRoot());
+        redBlackSet.remove( 21);
+        redBlackSetPrinter.printNode(redBlackSet.getRoot());
+        redBlackSet.remove( 7);
+        redBlackSetPrinter.printNode(redBlackSet.getRoot());
+        redBlackSet.remove( 13);
+        redBlackSetPrinter.printNode(redBlackSet.getRoot());
+        redBlackSet.remove( 6);
+        redBlackSetPrinter.printNode(redBlackSet.getRoot());
+        redBlackSet.remove( 10);
         redBlackSetPrinter.printNode(redBlackSet.getRoot());
     }
 }
