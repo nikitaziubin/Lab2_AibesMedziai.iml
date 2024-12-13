@@ -1,17 +1,10 @@
 package utils;
-
-import org.apache.commons.math3.stat.descriptive.rank.Min;
-
 import java.util.*;
 
-import static java.time.LocalTime.MIN;
-import static javax.swing.text.html.HTML.Attribute.N;
-
 public class RedBlackSet<E extends Comparable<E>> {
-    static RedBlackSet.BTreePrinter redBlackSetPrinter = new RedBlackSet.BTreePrinter();
     public static final String RED1 = "\u001B[31m";
     public static final String RESET = "\u001B[0m";
-    private RedBlackNode<E> root = null;
+    protected RedBlackNode<E> root = null;
     private RedBlackNode<E> nill = new RedBlackNode<>((E) "N", BLACK, null, null);
     RedBlackNode<E> specialNill = new RedBlackNode<>((E)"N", BLACK, root, null);
     protected Comparator<? super E> c = Comparator.naturalOrder();
@@ -258,6 +251,11 @@ public class RedBlackSet<E extends Comparable<E>> {
         return false;
     }
 
+    public void clear() {
+        root = null;
+        size = 0;
+    }
+
     private RedBlackNode<E> lastDeleted;
     private RedBlackNode<E> y;
     private RedBlackNode<E> deleted;
@@ -265,6 +263,10 @@ public class RedBlackSet<E extends Comparable<E>> {
     public void remove(E element) {
         removeRecursive(element, root);
         if ( deleted == null ){
+            return;
+        }
+        if (deleted == root)
+        {
             return;
         }
         removeRecursiveFromBook(deleted);
@@ -306,116 +308,203 @@ public class RedBlackSet<E extends Comparable<E>> {
         }
     }
     private void rbTransplant(RedBlackNode<E> u, RedBlackNode<E> v) {
-        if (u.parent == nill)
-        {
+        if (u.parent == nill) {
             root = v;
         } else if (u == u.parent.left) {
             u.parent.left = v;
-        }
-        else{
+        } else {
             u.parent.right = v;
         }
-        v.parent = u.parent;
+
+        if (v != null) {
+            v.parent = u.parent;
+        }
     }
 
     private RedBlackNode<E> removeRecursive(E element, RedBlackNode<E> node) {
         if (node == nill) {
             return nill;
         }
+
         int cmp = c.compare(element, node.element);
         if (cmp < 0) {
             node.left = removeRecursive(element, node.left);
-            return node;
         } else if (cmp > 0) {
             node.right = removeRecursive(element, node.right);
-            return node;
-        }
-        if (node.left == nill ) {
+        } else {
             deleted = node;
-            return node;
+            if (node.left == nill) {
+                return node.right;
+            } else if (node.right == nill) {
+                return node.left;
+            } else {
+                RedBlackNode<E> successor = get(node.right, true);
+                node.element = successor.element;
+                node.right = removeRecursive(successor.element, node.right);
+            }
         }
-        else if (node.right == nill) {
-            deleted = node;
-            return node;
-        }
-        else if (node.right != nill && node.left != nill) {
-            deleted = node;
-            return node;
-        }
-        return null;
+        return node;
     }
 
-   private void deleteionFixUp()
-    {
-        while (lastDeleted != root && lastDeleted.color == BLACK)
-        {
-            if (lastDeleted == lastDeleted.parent.left)
-            {
-                //for the left node
+    private void deleteionFixUp() {
+        while (lastDeleted != root && lastDeleted.color == BLACK) {
+            if (lastDeleted == lastDeleted.parent.left) {
+                // For the left node
                 RedBlackNode<E> siblingOfLastDeleted = lastDeleted.parent.right;
-                if (siblingOfLastDeleted.color == RED)
-                {
+
+                if (siblingOfLastDeleted != null && siblingOfLastDeleted.color == RED) {
                     siblingOfLastDeleted.color = BLACK;
                     lastDeleted.parent.color = RED;
                     leftRotation(lastDeleted.parent);
                     siblingOfLastDeleted = lastDeleted.parent.right;
                 }
-                if (siblingOfLastDeleted != null && (siblingOfLastDeleted.right == null || siblingOfLastDeleted.left == null || (siblingOfLastDeleted.right.color == BLACK && siblingOfLastDeleted.left.color == BLACK)))
-                {
+
+                if (siblingOfLastDeleted != null &&
+                        (siblingOfLastDeleted.right == null || siblingOfLastDeleted.left == null ||
+                                (siblingOfLastDeleted.right != null && siblingOfLastDeleted.right.color == BLACK) &&
+                                        (siblingOfLastDeleted.left != null && siblingOfLastDeleted.left.color == BLACK))) {
                     siblingOfLastDeleted.color = RED;
                     lastDeleted = lastDeleted.parent;
-                }
-                else {
-                    if (siblingOfLastDeleted.right.color == BLACK)
-                    {
-                        siblingOfLastDeleted.left.color = BLACK;
+                } else if (siblingOfLastDeleted != null) {
+                    if (siblingOfLastDeleted.right != null && siblingOfLastDeleted.right.color == BLACK) {
+                        if (siblingOfLastDeleted.left != null) {
+                            siblingOfLastDeleted.left.color = BLACK;
+                        }
                         siblingOfLastDeleted.color = RED;
                         rightRotation(siblingOfLastDeleted);
                         siblingOfLastDeleted = lastDeleted.parent.right;
                     }
+
                     siblingOfLastDeleted.color = lastDeleted.parent.color;
                     lastDeleted.parent.color = BLACK;
-                    if (siblingOfLastDeleted.right != null){
+                    if (siblingOfLastDeleted.right != null) {
                         siblingOfLastDeleted.right.color = BLACK;
                     }
                     leftRotation(lastDeleted.parent);
                     lastDeleted = root;
                 }
-            }
-            else {
-                //for the right node
+            } else {
+                // For the right node
                 RedBlackNode<E> siblingOfLastDeleted = lastDeleted.parent.left;
-                if (siblingOfLastDeleted.color == RED)
-                {
+
+                if (siblingOfLastDeleted != null && siblingOfLastDeleted.color == RED) {
                     siblingOfLastDeleted.color = BLACK;
                     lastDeleted.parent.color = RED;
                     rightRotation(lastDeleted.parent);
                     siblingOfLastDeleted = lastDeleted.parent.left;
                 }
-                //if (siblingOfLastDeleted.right.color == BLACK && siblingOfLastDeleted.left.color == BLACK)
-                if (siblingOfLastDeleted != null && (siblingOfLastDeleted.right == null || siblingOfLastDeleted.left == null || (siblingOfLastDeleted.right.color == BLACK && siblingOfLastDeleted.left.color == BLACK)))
-                {
+
+                if (siblingOfLastDeleted != null &&
+                        (siblingOfLastDeleted.right == null || siblingOfLastDeleted.left == null ||
+                                (siblingOfLastDeleted.right != null && siblingOfLastDeleted.right.color == BLACK) &&
+                                        (siblingOfLastDeleted.left != null && siblingOfLastDeleted.left.color == BLACK))) {
                     siblingOfLastDeleted.color = RED;
                     lastDeleted = lastDeleted.parent;
-                }
-                else {
-                    if (siblingOfLastDeleted.left.color == BLACK)
-                    {
-                        siblingOfLastDeleted.right.color = BLACK;
-                        siblingOfLastDeleted.left.color = RED;
+                } else if (siblingOfLastDeleted != null) {
+                    if (siblingOfLastDeleted.left != null && siblingOfLastDeleted.left.color == BLACK) {
+                        if (siblingOfLastDeleted.right != null) {
+                            siblingOfLastDeleted.right.color = BLACK;
+                        }
+                        siblingOfLastDeleted.color = RED;
                         leftRotation(siblingOfLastDeleted);
                         siblingOfLastDeleted = lastDeleted.parent.left;
                     }
+
                     siblingOfLastDeleted.color = lastDeleted.parent.color;
                     lastDeleted.parent.color = BLACK;
-                    siblingOfLastDeleted.left.color = BLACK;
+                    if (siblingOfLastDeleted.left != null) {
+                        siblingOfLastDeleted.left.color = BLACK;
+                    }
                     rightRotation(lastDeleted.parent);
                     lastDeleted = root;
                 }
-
             }
         }
         lastDeleted.color = BLACK;
+    }
+
+    public  void iteratorTest(){
+        IteratorRedBlackTree iteratorRedBlackTree  = new IteratorRedBlackTree(false);
+        while (iteratorRedBlackTree.hasNext()) {
+            iteratorRedBlackTree.next();
+            iteratorRedBlackTree.remove();
+            BTreePrinter.printNode(root);
+        }
+    }
+
+    public class IteratorRedBlackTree implements Iterator<E> {
+
+        private final Stack<RedBlackNode<E>> stack = new Stack<>();
+        // Specifies the direction of the iterator, true for ascending, false for descending
+        private final boolean ascending;
+        // Required for the remove() method.
+        private RedBlackNode<E> lastInStack;
+        private RedBlackNode<E> last;
+
+        public IteratorRedBlackTree(boolean ascendingOrder) {
+            this.ascending = ascendingOrder;
+            this.toStack(root);
+        }
+
+        @Override
+        public boolean hasNext() {
+            return !stack.empty();
+        }
+
+        @Override
+        public E next() {// If stack is empty
+            if (stack.empty()) {
+                lastInStack = root;
+                last = null;
+                return null;
+            } else {
+                // Returns the top element of the stack
+                RedBlackNode<E> n = stack.pop();
+                // The last returned element is saved, as well as the last element in the stack.
+                // Needed for remove() method
+                lastInStack = stack.isEmpty() ? root : stack.peek();
+                last = n;
+                RedBlackNode<E> node = ascending ? n.right : n.left;
+                // If ascending is true, the minimum element of the right sub-tree is searched,
+                // and all elements in the search path are placed on the stack
+                toStack(node);
+                return n.element;
+            }
+        }
+
+        @Override
+        public void remove() {
+            if (lastInStack == null) {
+                root = null;
+            }
+            if (last == root) {
+                root = removeRecursive(last.element, lastInStack);
+                size--;
+                return;
+            }
+
+            removeRecursive(last.element, lastInStack);
+            if ( deleted == null ){
+                return;
+            }
+            if (deleted == root)
+            {
+                return;
+            }
+            removeRecursiveFromBook(deleted);
+            size--;
+            if (originalColorOfDeletedNode == BLACK)
+            {
+                deleteionFixUp();
+            }
+        }
+
+        private void toStack(RedBlackNode<E> node) {
+            while (node != nill) {
+                stack.push(node);
+                node = ascending ? node.left : node.right;
+            }
+        }
     }
 
     protected static class RedBlackNode<N> {

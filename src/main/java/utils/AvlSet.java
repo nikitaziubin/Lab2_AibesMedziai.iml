@@ -26,9 +26,7 @@ public class AvlSet<E extends Comparable<E>> extends BstSet<E> implements Sorted
      */
     @Override
     public void add(E element) {
-        if (element == null) {
-            throw new IllegalArgumentException("Element is null in add(E element)");
-        }
+
         root = addRecursive(element, (AVLNode<E>) root);
 
     }
@@ -42,7 +40,9 @@ public class AvlSet<E extends Comparable<E>> extends BstSet<E> implements Sorted
             add(element);
         }
     }
-
+    public BstNode<E> getRoot() {
+        return root;
+    }
     /**
      * A recursive method used as helper method for adding a new element to the set
      *
@@ -246,7 +246,6 @@ public class AvlSet<E extends Comparable<E>> extends BstSet<E> implements Sorted
     private int height(AVLNode<E> n) {
         return (n == null) ? -1 : n.height;
     }
-
     /**
      * Inner class of tree node
      *

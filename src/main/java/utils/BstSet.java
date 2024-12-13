@@ -65,9 +65,6 @@ public class BstSet<E extends Comparable<E>> implements SortedSet<E>, Cloneable 
         size = 0;
     }
 
-
-
-
     /**
      * Checks whether an element exists in the array.
      *
@@ -191,7 +188,7 @@ public class BstSet<E extends Comparable<E>> implements SortedSet<E>, Cloneable 
 
     private BstNode<E> removeRecursive(E element, BstNode<E> node) {
         if (node == null) {
-            throw new IllegalArgumentException("No element in binary search tree");
+            return null;
         }
 
         int cmp = c.compare(element, node.element);
@@ -215,6 +212,31 @@ public class BstSet<E extends Comparable<E>> implements SortedSet<E>, Cloneable 
         }
 
         return null;
+    }
+
+    public boolean find(E element) {
+        if (root == null || element == null) {
+            return false;
+        }
+        if (element.equals(root.element)) {
+            return true;
+        }
+
+        BstNode<E> current = root;
+
+        while (current != null) {
+            if (current.element.equals(element)) {
+                return true;
+            }
+            int cmp = c.compare(current.element, element);
+
+            if (cmp > 0) {
+                current = current.left;
+            } else {
+                current = current.right;
+            }
+        }
+        return false;
     }
 
     /**

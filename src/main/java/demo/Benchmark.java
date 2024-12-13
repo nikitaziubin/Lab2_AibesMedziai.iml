@@ -1,9 +1,6 @@
 package demo;
 
-import utils.AvlSet;
-import utils.BstSet;
-import utils.BstSetIterative;
-import utils.SortedSet;
+import utils.*;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.infra.BenchmarkParams;
 import org.openjdk.jmh.runner.Runner;
@@ -18,86 +15,120 @@ import java.util.concurrent.TimeUnit;
 @BenchmarkMode(Mode.AverageTime)
 @State(Scope.Benchmark)
 @OutputTimeUnit(TimeUnit.MICROSECONDS)
-@Warmup(time = 1, timeUnit = TimeUnit.SECONDS)
-@Measurement(time = 1, timeUnit = TimeUnit.SECONDS)
+@Warmup(time = 1, iterations = 1, timeUnit = TimeUnit.SECONDS)
+@Measurement(time = 1, iterations = 3, timeUnit = TimeUnit.SECONDS)
 public class Benchmark {
-    @Param({"1000", "2000", "4000", "8000"})
+    @Param({"100", "201", "405", "811"})
     public int iterationCount;
 
-    Car[] cars;
-    SortedSet<Car> carsThousandSet = new BstSet<>();
+
+    BstSet<Integer> BstTree = new BstSet<>();
+    AvlSet<Integer> AvlTree = new AvlSet<>();
+    RedBlackSet<Integer> RedBlackTree = new RedBlackSet<>();
 
     @Setup(Level.Iteration)
     public void generateElements() {
-        cars = generateElements(1000);
-        for (Car car : cars) {
-            carsThousandSet.add(car);
-        }
-    }
+     BstTree = new BstSet<>();
+     AvlTree = new AvlSet<>();
+     RedBlackTree = new RedBlackSet<>();
 
-    static Car[] generateElements(int count) {
-        return new CarsGenerator().generateShuffle(count, 1.0);
+        for (int i = iterationCount + iterationCount; i > iterationCount; i--) {
+            BstTree.add(i);
+            AvlTree.add(i);
+            RedBlackTree.add(i);
+        }
     }
 
     @org.openjdk.jmh.annotations.Benchmark
-    public AvlSet<Car> addAvlAllRecursive() {
-        AvlSet<Car> carSetMoreThousend = new AvlSet<>(Car.byPrice);
-        for(int i = 0; i < iterationCount; i++)
+    public BstSet<Integer> deletBstTree() {
+        for (int i = 50; i < iterationCount; i++)
         {
-            carSetMoreThousend.addAll(carsThousandSet);
+            BstTree.remove(i);
         }
-        return carSetMoreThousend;
+        return BstTree;
     }
 
     @org.openjdk.jmh.annotations.Benchmark
-    public BstSet<Car> addBstAllRecursive() {
-        BstSet<Car> carSetMoreThousend = new BstSet<>(Car.byPrice);
-        for(int i = 0; i < iterationCount; i++)
+    public RedBlackSet<Integer> deletRedBlackTree() {
+        for (int i = 50; i < iterationCount; i++)
         {
-            carSetMoreThousend.addAll(carsThousandSet);
+            RedBlackTree.remove(i);
         }
-        return carSetMoreThousend;
+        return RedBlackTree;
     }
 
+    @org.openjdk.jmh.annotations.Benchmark
+    public AvlSet<Integer> deletAvlTree() {
+        for (int i = 50; i < iterationCount; i++)
+        {
+            AvlTree.remove(i);
+        }
+        return AvlTree;
+    }
+
+
+    @TearDown(Level.Iteration)
+    public void resetTrees() {
+        BstTree.clear();
+        AvlTree.clear();
+        RedBlackTree.clear();
+    }
+    /*@org.openjdk.jmh.annotations.Benchmark
+    public AvlSet<Integer> findAvlTree() {
+        for(int i = 0; i < iterationCount; i++)
+        {
+            AvlTree.find(i);
+        }
+        return AvlTree;
+    }
+
+    @org.openjdk.jmh.annotations.Benchmark
+    public BstSet<Integer> findBstTree() {
+        for(int i = 0; i < iterationCount; i++)
+        {
+            BstTree.find(i);
+        }
+        return BstTree;
+    }
+
+    @org.openjdk.jmh.annotations.Benchmark
+    public RedBlackSet<Integer> findRedBlackTree() {
+        for(int i = 0; i < iterationCount; i++)
+        {
+            RedBlackTree.find(i);
+        }
+        return RedBlackTree;
+    }*/
 
     /*@org.openjdk.jmh.annotations.Benchmark
-    public BstSetIterative<Car> addBstIterative() {
-        BstSetIterative<Car> carSet = new BstSetIterative<>(Car.byPrice);
-        addElements(cars, carSet);
-        return carSet;
-    }
-@org.openjdk.jmh.annotations.Benchmark
-    public BstSet<Car> addBstRecursive() {
-        BstSet<Car> carSet = new BstSet<>(Car.byPrice);
-        addElements(car, carSet);
-        return carSet;
-    }
-    @org.openjdk.jmh.annotations.Benchmark
-    public AvlSet<Car> addAvlRecursive() {
-        AvlSet<Car> carSet = new AvlSet<>(Car.byPrice);
-        addElements(cars, carSet);
-        return carSet;
+    public AvlSet<Integer> addAvlTree() {
+        AvlSet<Integer> carSetMoreThousend = new AvlSet<>();
+        for(int i = 0; i < iterationCount; i++)
+        {
+            carSetMoreThousend.add(i);
+        }
+        return carSetMoreThousend;
     }
 
     @org.openjdk.jmh.annotations.Benchmark
-    public void removeBst(FullSet carSet) {
-        for (Car car : carSet.cars) {
-            carSet.carSet.remove(car);
+    public BstSet<Integer> addBstTree() {
+        BstSet<Integer> carSetMoreThousend = new BstSet<>();
+        for(int i = 0; i < iterationCount; i++)
+        {
+            carSetMoreThousend.add(i);
         }
+        return carSetMoreThousend;
     }
 
     @org.openjdk.jmh.annotations.Benchmark
-    public void sizeBst(FullSet carSet) {
-        for (Car car : carSet.cars) {
-            carSet.carSet.size();
+    public RedBlackSet<Integer> addRedBlackTree() {
+        RedBlackSet<Integer> carSetMoreThousend = new RedBlackSet<>();
+        for(int i = 0; i < iterationCount; i++)
+        {
+            carSetMoreThousend.add(i);
         }
-    }
-    public static void addElements(Car[] carArray, SortedSet<Car> carSet) {
-        for (Car car : carArray) {
-            carSet.add(car);
-        }
-    }
-    */
+        return carSetMoreThousend;
+    }*/
     
     public static void main(String[] args) throws RunnerException {
         Options opt = new OptionsBuilder()
